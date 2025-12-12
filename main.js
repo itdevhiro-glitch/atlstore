@@ -82,7 +82,10 @@ const renderProducts = (snapshot, isAdmin = false) => {
     if (catContainer) catContainer.innerHTML = '';
     if (adminContainer) adminContainer.innerHTML = '';
 
-    if (!snapshot.exists()) return;
+    if (!snapshot.exists()) {
+        if (catContainer) catContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 2rem;">Belum ada data produk.</p>';
+        return;
+    }
 
     snapshot.forEach((child) => {
         const data = child.val();
@@ -174,7 +177,9 @@ const renderEmployees = (snapshot) => {
 
 const catalogGrid = document.getElementById('catalog-grid');
 if (catalogGrid) {
-    onValue(productsRef, (snap) => renderProducts(snap, false));
+    onValue(productsRef, (snap) => {
+        renderProducts(snap, false);
+    });
 }
 
 const dashboard = document.getElementById('dashboard-container');
