@@ -1,26 +1,29 @@
-/* =========================================
-   1. VARIABLES & RESET
-   ========================================= */
+/* ==========================================================================
+   1. RESET & VARIABLES (TEMA: NAVY BLUE / PROFESSIONAL TECH)
+   ========================================================================== */
 :root {
-    /* Color Palette - Professional Tech Navy */
-    --bg-dark: #0f172a;       /* Navy Gelap untuk Hero/Footer */
-    --bg-body: #f1f5f9;       /* Abu-abu terang untuk background Admin/Umum */
-    --bg-surface: #ffffff;    /* Putih untuk Kartu/Tabel */
+    /* Main Colors */
+    --bg-dark: #0f172a;       /* Navy Gelap (Hero/Admin Sidebar) */
+    --bg-body: #f1f5f9;       /* Abu Terang (Background Utama) */
+    --bg-surface: #ffffff;    /* Putih (Card/Table) */
     
+    /* Brand Colors */
     --primary: #3b82f6;       /* Biru Utama */
     --primary-dark: #1d4ed8;  /* Biru Gelap (Hover) */
-    --success: #10b981;       /* Hijau (Tombol Jual/Profit) */
-    --danger: #ef4444;        /* Merah (Tombol Hapus/Rugi) */
-    --warning: #f59e0b;       /* Kuning/Orange */
+    --secondary: #64748b;     /* Abu-abu Teks */
     
-    --text-main: #334155;     /* Teks Utama (Gelap) */
-    --text-dim: #64748b;      /* Teks Sekunder (Abu) */
-    --text-light: #f8fafc;    /* Teks Putih */
+    /* Status Colors */
+    --success: #10b981;       /* Hijau (Profit/Jual) */
+    --success-dark: #059669;
+    --danger: #ef4444;        /* Merah (Hapus/Rugi) */
+    --warning: #f59e0b;       /* Kuning */
     
-    --border: #e2e8f0;        /* Garis Batas Halus */
+    /* Typography & UI */
+    --text-main: #334155;     /* Teks Utama */
+    --text-light: #f8fafc;    /* Teks di Background Gelap */
+    --border: #e2e8f0;        /* Garis Batas */
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    --radius: 10px;           /* Sudut tumpul yang konsisten */
-    
+    --radius: 10px;           /* Sudut Card */
     --font-main: 'Plus Jakarta Sans', 'Inter', sans-serif;
 }
 
@@ -31,12 +34,15 @@ ul { list-style: none; }
 img { max-width: 100%; display: block; }
 button { cursor: pointer; border: none; font-family: inherit; }
 
+/* Utility Classes */
 .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
-.hidden { display: none !important; }
+.hidden { display: none !important; } /* PENTING UNTUK ADMIN SPA */
+.text-green { color: var(--success); }
+.text-red { color: var(--danger); }
 
-/* =========================================
-   2. COMPONENTS (BUTTONS, CARDS, BADGES)
-   ========================================= */
+/* ==========================================================================
+   2. BUTTONS & BADGES
+   ========================================================================== */
 .btn {
     display: inline-flex; align-items: center; justify-content: center;
     padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600;
@@ -44,6 +50,7 @@ button { cursor: pointer; border: none; font-family: inherit; }
 }
 .btn-sm { padding: 0.4rem 1rem; font-size: 0.85rem; border-radius: 6px; }
 
+/* Button Variants */
 .btn-primary { background: var(--primary); color: white; box-shadow: 0 2px 10px rgba(59, 130, 246, 0.3); }
 .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); }
 
@@ -51,7 +58,7 @@ button { cursor: pointer; border: none; font-family: inherit; }
 .btn-secondary:hover { background: rgba(255,255,255,0.1); border-color: white; }
 
 .btn-success { background: var(--success); color: white; }
-.btn-success:hover { filter: brightness(90%); }
+.btn-success:hover { background: var(--success-dark); }
 
 .btn-danger { background: var(--danger); color: white; }
 .btn-danger:hover { filter: brightness(90%); }
@@ -60,37 +67,20 @@ button { cursor: pointer; border: none; font-family: inherit; }
 .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
 
 .btn-nav { background: var(--bg-dark); color: white; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 600; }
-.btn-nav:hover { background: #334155; }
+.btn-nav:hover { background: #1e293b; }
 
-/* Marketplace Buttons */
+.btn-text { background: none; color: var(--secondary); text-decoration: underline; font-size: 0.85rem; }
+
+/* Marketplace Buttons (Untuk Katalog) */
 .btn-tokopedia { background: #42B549; color: white; width: 100%; }
+.btn-tokopedia:hover { background: #35933b; }
 .btn-shopee { background: #EE4D2D; color: white; width: 100%; }
-.btn-disabled { background: var(--border); color: var(--text-dim); cursor: not-allowed; width: 100%; }
+.btn-shopee:hover { background: #d73c1e; }
+.btn-disabled { background: var(--border); color: var(--secondary); cursor: not-allowed; width: 100%; }
 
-/* Cards */
-.card {
-    background: var(--bg-surface); border-radius: var(--radius);
-    border: 1px solid var(--border); overflow: hidden;
-    transition: 0.3s; display: flex; flex-direction: column;
-}
-.card:hover { transform: translateY(-5px); box-shadow: var(--shadow); border-color: var(--primary); }
-.card-img {
-    width: 100%; height: 200px; object-fit: contain;
-    padding: 1.5rem; background: #f8fafc; border-bottom: 1px solid var(--border);
-}
-.card-body { padding: 1.25rem; display: flex; flex-direction: column; gap: 0.5rem; flex: 1; }
-.card-brand { color: var(--primary); font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
-.card-title { font-size: 1.1rem; font-weight: 700; color: var(--bg-dark); line-height: 1.3; }
-.card-specs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.5rem 0; }
-.spec-tag {
-    background: #f1f5f9; color: var(--text-dim); padding: 3px 8px;
-    border-radius: 4px; font-size: 0.75rem; font-weight: 600;
-}
-.card-price { font-size: 1.3rem; font-weight: 800; color: var(--bg-dark); margin-top: auto; }
-
-/* =========================================
-   3. NAVBAR (UMUM)
-   ========================================= */
+/* ==========================================================================
+   3. NAVBAR (GLOBAL)
+   ========================================================================== */
 .navbar {
     background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
     position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border);
@@ -100,13 +90,13 @@ button { cursor: pointer; border: none; font-family: inherit; }
 .brand { font-size: 1.5rem; font-weight: 800; color: var(--bg-dark); }
 .brand-highlight { color: var(--primary); }
 .nav-menu { display: flex; gap: 2rem; align-items: center; }
-.nav-link { font-weight: 500; color: var(--text-dim); }
+.nav-link { font-weight: 500; color: var(--secondary); }
 .nav-link:hover, .nav-link.active { color: var(--primary); }
 .mobile-toggle { display: none; font-size: 1.5rem; background: none; color: var(--bg-dark); }
 
-/* =========================================
-   4. LANDING PAGE (HERO & SECTIONS)
-   ========================================= */
+/* ==========================================================================
+   4. LANDING PAGE COMPONENTS (HERO & SECTIONS)
+   ========================================================================== */
 .hero-section {
     background: var(--bg-dark); color: var(--text-light);
     padding: 5rem 0; position: relative; overflow: hidden;
@@ -136,17 +126,15 @@ button { cursor: pointer; border: none; font-family: inherit; }
 .section-header { text-align: center; margin-bottom: 3rem; }
 .section-header h2 { font-size: 2rem; font-weight: 800; color: var(--bg-dark); margin-bottom: 0.5rem; }
 
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; }
-
 /* Footer */
 .footer { background: var(--bg-dark); color: #94a3b8; padding-top: 4rem; }
 .footer-wrapper { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 3rem; padding-bottom: 3rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
 .footer-col h3 { color: white; margin-bottom: 1rem; font-size: 1.25rem; }
 .copyright { padding: 1.5rem 0; text-align: center; font-size: 0.875rem; }
 
-/* =========================================
-   5. CATALOG PAGE SPECIFIC
-   ========================================= */
+/* ==========================================================================
+   5. CATALOG & CARDS
+   ========================================================================== */
 .catalog-layout { display: grid; grid-template-columns: 260px 1fr; gap: 2rem; align-items: start; }
 
 .filter-sidebar {
@@ -154,7 +142,6 @@ button { cursor: pointer; border: none; font-family: inherit; }
     border: 1px solid var(--border); position: sticky; top: 100px;
 }
 .filter-header { display: flex; justify-content: space-between; margin-bottom: 1rem; align-items: center; }
-.btn-text { background: none; color: var(--text-dim); text-decoration: underline; font-size: 0.85rem; }
 .filter-group { margin-bottom: 1.5rem; }
 .filter-group label { display: block; font-weight: 700; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--bg-dark); }
 .checkbox-group { display: flex; flex-direction: column; gap: 0.5rem; }
@@ -162,12 +149,34 @@ button { cursor: pointer; border: none; font-family: inherit; }
 
 .catalog-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
 
-/* =========================================
-   6. ADMIN PAGE SPECIFIC (The Missing Part!)
-   ========================================= */
+/* GRID & CARDS */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; }
+.card {
+    background: var(--bg-surface); border-radius: var(--radius);
+    border: 1px solid var(--border); overflow: hidden;
+    transition: 0.3s; display: flex; flex-direction: column;
+}
+.card:hover { transform: translateY(-5px); box-shadow: var(--shadow); border-color: var(--primary); }
+.card-img {
+    width: 100%; height: 200px; object-fit: contain;
+    padding: 1.5rem; background: #f8fafc; border-bottom: 1px solid var(--border);
+}
+.card-body { padding: 1.25rem; display: flex; flex-direction: column; gap: 0.5rem; flex: 1; }
+.card-brand { color: var(--primary); font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+.card-title { font-size: 1.1rem; font-weight: 700; color: var(--bg-dark); line-height: 1.3; }
+.card-specs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.5rem 0; }
+.spec-tag {
+    background: #f1f5f9; color: var(--secondary); padding: 3px 8px;
+    border-radius: 4px; font-size: 0.75rem; font-weight: 600;
+}
+.card-price { font-size: 1.3rem; font-weight: 800; color: var(--bg-dark); margin-top: auto; }
+
+/* ==========================================================================
+   6. ADMIN DASHBOARD (WAJIB ADA!)
+   ========================================================================== */
 .admin-layout { display: flex; min-height: 100vh; background: var(--bg-body); }
 
-/* Sidebar */
+/* Sidebar Admin */
 .sidebar {
     width: 280px; background: var(--bg-dark); color: white;
     padding: 2rem; position: fixed; height: 100%; z-index: 50;
@@ -175,7 +184,6 @@ button { cursor: pointer; border: none; font-family: inherit; }
 }
 .sidebar .logo { color: white; margin-bottom: 3rem; font-weight: 800; font-size: 1.5rem; }
 .sidebar .logo span { color: var(--primary); }
-.sidebar-nav { flex: 1; display: flex; flex-direction: column; gap: 0.5rem; }
 .nav-item {
     display: flex; align-items: center; padding: 1rem;
     color: #94a3b8; font-weight: 500; border-radius: 8px; cursor: pointer;
@@ -186,10 +194,32 @@ button { cursor: pointer; border: none; font-family: inherit; }
 /* Main Content Admin */
 .main-content { margin-left: 280px; flex: 1; padding: 2rem; width: 100%; }
 .view-section { display: none; animation: fadeIn 0.3s ease; }
-.view-section.active { display: block; }
+.view-section.active { display: block; } /* PENTING UNTUK TAB SWITCHING */
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-/* Login Overlay */
+/* Stats & Tables */
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+.stat-card { background: white; padding: 1.5rem; border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); }
+.stat-label { color: var(--secondary); font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; }
+.stat-value { font-size: 1.8rem; font-weight: 800; color: var(--bg-dark); }
+
+.table-container { background: white; border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; margin-top: 1rem; }
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th, .data-table td { padding: 1rem 1.5rem; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+.data-table th { background: #f8fafc; font-weight: 700; color: var(--secondary); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; }
+.data-table tr:hover { background: #f8fafc; }
+
+/* Form Admin */
+.form-card { background: white; padding: 2rem; border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 2rem; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1rem; }
+.form-group label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-main); }
+.form-input, .form-select {
+    width: 100%; padding: 0.75rem; border: 1px solid var(--border);
+    border-radius: 8px; outline: none; transition: 0.2s; font-size: 0.95rem; background: #fff;
+}
+.form-input:focus, .form-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+
+/* Login Admin */
 .login-overlay {
     position: fixed; inset: 0; background: #f1f5f9; z-index: 999;
     display: flex; align-items: center; justify-content: center;
@@ -200,38 +230,9 @@ button { cursor: pointer; border: none; font-family: inherit; }
     width: 100%; max-width: 400px; text-align: center;
 }
 
-/* Dashboard Stats */
-.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
-.stat-card { background: white; padding: 1.5rem; border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); }
-.stat-label { color: var(--text-dim); font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; }
-.stat-value { font-size: 1.8rem; font-weight: 800; color: var(--bg-dark); }
-.text-green { color: var(--success); }
-.text-red { color: var(--danger); }
-
-/* Forms */
-.form-card { background: white; padding: 2rem; border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 2rem; }
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1rem; }
-.form-group label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-main); }
-.form-input, .form-select {
-    width: 100%; padding: 0.75rem; border: 1px solid var(--border);
-    border-radius: 8px; outline: none; transition: 0.2s; font-size: 0.95rem; background: #fff;
-}
-.form-input:focus, .form-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
-
-/* Tables */
-.table-container { background: white; border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; margin-top: 1rem; }
-.data-table { width: 100%; border-collapse: collapse; }
-.data-table th, .data-table td { padding: 1rem 1.5rem; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
-.data-table th { background: #f8fafc; font-weight: 700; color: var(--text-dim); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; }
-.data-table tr:hover { background: #f8fafc; }
-.data-table tr:last-child td { border-bottom: none; }
-
-/* Admin Mobile Header */
-.admin-mobile-header { display: none; }
-
-/* =========================================
-   7. RESPONSIVE MEDIA QUERIES
-   ========================================= */
+/* ==========================================================================
+   7. RESPONSIVE / MOBILE
+   ========================================================================== */
 @media (max-width: 1024px) {
     /* Admin Mobile */
     .sidebar { transform: translateX(-100%); width: 260px; }
