@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Katalog Lengkap - Atlantis Store</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,11 +12,12 @@
     <nav class="navbar">
         <div class="container nav-flex">
             <div class="logo">Atlantis<span>Store</span></div>
-            <ul class="nav-links">
-                <li><a href="index.html">Beranda</a></li>
-                <li><a href="barang.html" class="active">Katalog</a></li>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Beranda</a></li>
+                <li><a href="barang.html" class="nav-link active">Katalog</a></li>
                 <li><a href="https://wa.me/6285946257633" class="btn btn-primary btn-sm">Hubungi Sales</a></li>
             </ul>
+            <button class="mobile-toggle">☰</button>
         </div>
     </nav>
 
@@ -24,13 +25,13 @@
         <div class="catalog-layout">
             <aside class="filter-sidebar">
                 <div class="filter-header">
-                    <h3>Filter</h3>
+                    <h3>Filter Pencarian</h3>
                     <button id="reset-filter" class="btn-text">Reset</button>
                 </div>
                 
                 <div class="filter-group">
                     <label>Cari Produk</label>
-                    <input type="text" id="search-input" class="form-input" placeholder="Nama laptop...">
+                    <input type="text" id="search-input" class="form-input" placeholder="Ketik nama laptop...">
                 </div>
 
                 <div class="filter-group">
@@ -59,7 +60,7 @@
                 </div>
 
                 <div class="filter-group">
-                    <label>RAM</label>
+                    <label>Kapasitas RAM</label>
                     <div class="checkbox-group">
                         <label><input type="checkbox" value="4GB" class="filter-ram"> 4GB</label>
                         <label><input type="checkbox" value="8GB" class="filter-ram"> 8GB</label>
@@ -71,20 +72,45 @@
 
             <main class="catalog-content">
                 <div class="catalog-header">
-                    <h2 id="catalog-count">Menampilkan Produk</h2>
-                    <select id="sort-price" class="form-select" style="width: auto;">
+                    <h2 id="catalog-count" style="font-size: 1.5rem; font-weight: 700;">Menampilkan Produk</h2>
+                    <select id="sort-price" class="form-select" style="width: auto; min-width: 150px;">
                         <option value="newest">Terbaru</option>
                         <option value="low-high">Harga Terendah</option>
                         <option value="high-low">Harga Tertinggi</option>
                     </select>
                 </div>
                 <div id="full-catalog-grid" class="grid">
-                    <p style="text-align: center; grid-column: 1/-1; color: #64748B;">Memuat produk...</p>
+                    <p style="text-align: center; grid-column: 1/-1; color: #64748B; padding: 2rem;">Memuat katalog produk...</p>
                 </div>
             </main>
         </div>
     </div>
 
+    <footer class="footer">
+        <div class="container footer-wrapper">
+            <div class="footer-col">
+                <h3>Atlantis<span>Store</span></h3>
+                <p>Solusi perangkat keras profesional. Kualitas unit terjamin dengan standar industri.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Alamat</h4>
+                <p>Garut, Jawa Barat</p>
+            </div>
+            <div class="footer-col">
+                <h4>Kontak</h4>
+                <p>WhatsApp: 0859-4625-7633</p>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2025 Atlantis Store. All rights reserved.</p>
+        </div>
+    </footer>
+
     <script type="module" src="main.js"></script>
+    <script>
+        document.querySelector('.mobile-toggle').addEventListener('click', () => {
+            document.querySelector('.nav-menu').classList.toggle('active');
+        });
+    </script>
 </body>
 </html>
