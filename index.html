@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atlantis Store - Laptop Profesional</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container nav-container">
+            <div class="logo">Atlantis<span>Store</span></div>
+            <ul class="nav-links">
+                <li><a href="#recommendation">Rekomendasi</a></li>
+                <li><a href="#catalog">Katalog</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="container hero-content">
+            <h1>Temukan Laptop Impian</h1>
+            <p>Pilihan terbaik untuk profesional dan gaming dengan harga kompetitif.</p>
+            <a href="#catalog" class="btn btn-primary">Lihat Katalog</a>
+        </div>
+    </header>
+
+    <section id="recommendation" class="section">
+        <div class="container">
+            <h2 class="section-title">Rekomendasi Terbaik</h2>
+            <div id="recommendation-grid" class="product-grid"></div>
+        </div>
+    </section>
+
+    <section id="catalog" class="section bg-light">
+        <div class="container">
+            <div class="catalog-header">
+                <h2 class="section-title">Katalog Produk</h2>
+                <div class="filter-group">
+                    <select id="brand-filter">
+                        <option value="all">Semua Brand</option>
+                        <option value="Asus">Asus</option>
+                        <option value="Lenovo">Lenovo</option>
+                        <option value="HP">HP</option>
+                        <option value="Acer">Acer</option>
+                        <option value="MacBook">MacBook</option>
+                        <option value="MSI">MSI</option>
+                    </select>
+                </div>
+            </div>
+            <div id="catalog-grid" class="product-grid"></div>
+        </div>
+    </section>
+
+    <footer class="footer-pro">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>Atlantis Store</h3>
+                    <p>Solusi laptop profesional dan gaming terpercaya. Berkualitas, bergaransi, dan harga kompetitif.</p>
+                    <br>
+                    <p><strong>Owner:</strong> Rahmat Hidayat</p>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>Kontak & Alamat</h3>
+                    <p>📍 Balong, RT. 001, RW. 004, Desa Suci,<br>Kec. Karangpawitan, Kab. Garut,<br>Jawa Barat 44182</p>
+                    <p class="mt-2">📞 <a href="https://wa.me/6285946257633" target="_blank">0859-4625-7633</a></p>
+                </div>
+
+                <div class="footer-col">
+                    <h3>Ikuti Kami</h3>
+                    <a href="https://instagram.com/atl.aquatech.service" target="_blank" class="social-link">
+                        📸 @atl.aquatech.service
+                    </a>
+                    <p class="mt-2 text-sm">Update stok terbaru dan promo menarik.</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Atlantis Store. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>
