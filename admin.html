@@ -3,78 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Workspace - Atlantis</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Admin Panel - Atlantis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <style>
-        body { background-color: #F8FAFC; }
-        .hidden { display: none !important; }
-        #login-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px);
-            z-index: 1000; display: flex; justify-content: center; align-items: center;
-        }
-    </style>
 </head>
-<body>
+<body style="background-color: #F8FAFC;">
 
-    <div id="login-overlay">
+    <div id="login-overlay" class="login-overlay">
         <div class="login-box">
-            <div class="login-header">
-                <h3>Atlantis Admin</h3>
-                <p>Please enter your credentials</p>
-            </div>
+            <h2 style="margin-bottom: 1.5rem;">Admin Login</h2>
             <form id="login-form">
-                <div class="input-group">
-                    <label>Email Address</label>
-                    <input type="email" id="admin-email" placeholder="admin@atlantis.com" required>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="admin-email" class="form-input" required>
                 </div>
-                <div class="input-group">
+                <div class="form-group">
                     <label>Password</label>
-                    <input type="password" id="admin-pass" required>
+                    <input type="password" id="admin-pass" class="form-input" required>
                 </div>
-                <button type="submit" class="btn btn-primary full-width">Secure Login</button>
+                <button type="submit" class="btn btn-primary" style="width:100%">Masuk</button>
+                <p id="login-error" style="color: red; margin-top: 10px; font-size: 0.9rem;"></p>
             </form>
-            <p id="login-error" class="error-text"></p>
         </div>
     </div>
 
-    <div class="admin-layout hidden" id="dashboard-container">
+    <div id="dashboard-container" class="admin-layout hidden">
         <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="logo white">Admin<span class="dot-blue">.</span></div>
-            </div>
-            <nav class="sidebar-nav">
-                <button class="nav-item active" onclick="showSection('input-section')">
-                    <span>➕</span> Tambah Produk
-                </button>
-                <button class="nav-item" onclick="showSection('list-section')">
-                    <span>📦</span> Kelola Stok
-                </button>
+            <div class="logo" style="margin-bottom: 2rem;">Atlantis<span>Admin</span></div>
+            <nav>
+                <button class="nav-btn active" onclick="switchTab('input-view')">➕ Tambah Produk</button>
+                <button class="nav-btn" onclick="switchTab('list-view')">📦 Data Stok</button>
+                <button class="nav-btn" id="logout-btn" style="color: #EF4444; margin-top: 2rem;">🚪 Logout</button>
             </nav>
-            <div class="sidebar-footer">
-                <button id="logout-btn" class="btn-logout">Sign Out</button>
-            </div>
         </aside>
 
-        <main class="dashboard-content">
-            <header class="top-bar">
-                <h2>Inventory Management</h2>
-                <div class="user-profile">
-                    <span>Admin Mode</span>
-                </div>
-            </header>
-
-            <section id="input-section" class="admin-view active">
-                <div class="panel">
-                    <div class="panel-header">
-                        <h3>Input Laptop Baru</h3>
-                    </div>
-                    <form id="product-form" class="admin-form">
+        <main class="main-content">
+            <section id="input-view" class="section-view active">
+                <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: var(--shadow); max-width: 800px;">
+                    <h2 style="margin-bottom: 1.5rem;">Input Laptop Baru</h2>
+                    <form id="product-form">
                         <div class="form-row">
-                            <div class="input-group">
+                            <div class="form-group">
                                 <label>Brand</label>
-                                <select id="brand" required>
+                                <select id="brand" class="form-input">
                                     <option value="Asus">Asus</option>
                                     <option value="Lenovo">Lenovo</option>
                                     <option value="HP">HP</option>
@@ -84,73 +55,81 @@
                                     <option value="Dell">Dell</option>
                                 </select>
                             </div>
-                            <div class="input-group">
-                                <label>Nama / Model Lengkap</label>
-                                <input type="text" id="model" placeholder="Contoh: ROG Zephyrus G14" required>
+                            <div class="form-group">
+                                <label>Model / Seri</label>
+                                <input type="text" id="model" class="form-input" placeholder="Contoh: Legion 5 Pro" required>
                             </div>
                         </div>
 
                         <div class="form-row">
-                            <div class="input-group">
-                                <label>Processor (CPU)</label>
-                                <input type="text" id="cpu" placeholder="Contoh: Ryzen 9 5900HS" required>
+                            <div class="form-group">
+                                <label>Processor</label>
+                                <input type="text" id="cpu" class="form-input" placeholder="Core i7 / Ryzen 7" required>
                             </div>
-                            <div class="input-group">
-                                <label>Kartu Grafis (VGA)</label>
-                                <input type="text" id="gpu" placeholder="Contoh: RTX 3060 6GB" required>
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="input-group">
-                                <label>RAM (Pisahkan koma)</label>
-                                <input type="text" id="ram" placeholder="8GB, 16GB" required>
-                            </div>
-                            <div class="input-group">
-                                <label>Storage (Pisahkan koma)</label>
-                                <input type="text" id="ssd" placeholder="512GB, 1TB" required>
+                            <div class="form-group">
+                                <label>VGA</label>
+                                <input type="text" id="gpu" class="form-input" placeholder="RTX 3060" required>
                             </div>
                         </div>
 
                         <div class="form-row">
-                            <div class="input-group">
-                                <label>Harga (Rupiah)</label>
-                                <input type="number" id="price" placeholder="15000000" required>
+                            <div class="form-group">
+                                <label>RAM</label>
+                                <input type="text" id="ram" class="form-input" placeholder="16GB" required>
                             </div>
-                            <div class="input-group">
-                                <label>Status Rekomendasi</label>
-                                <select id="isRecommended">
-                                    <option value="false">Standard</option>
-                                    <option value="true">⭐ Highly Recommended</option>
+                            <div class="form-group">
+                                <label>SSD/Storage</label>
+                                <input type="text" id="ssd" class="form-input" placeholder="512GB" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Harga (Rp)</label>
+                                <input type="number" id="price" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Rekomendasi?</label>
+                                <select id="isRecommended" class="form-input">
+                                    <option value="false">Tidak</option>
+                                    <option value="true">Ya (Tampil di Depan)</option>
                                 </select>
                             </div>
                         </div>
 
-                        <div class="input-group">
+                        <div class="form-group">
                             <label>URL Gambar (Direct Link)</label>
-                            <input type="url" id="image" placeholder="https://i.postimg.cc/..." required>
-                            <small>Gunakan Direct Link dari Postimages.org</small>
+                            <input type="url" id="image" class="form-input" placeholder="https://i.postimg.cc/..." required>
+                            <small style="color: var(--secondary)">Gunakan link dari Postimages.org</small>
                         </div>
 
-                        <button type="submit" class="btn btn-primary btn-xl">Simpan Produk</button>
+                        <button type="submit" class="btn btn-primary" style="width:100%">Simpan Data</button>
                     </form>
                 </div>
             </section>
 
-            <section id="list-section" class="admin-view">
-                <div id="admin-product-list" class="product-grid"></div>
+            <section id="list-view" class="section-view">
+                <h2 style="margin-bottom: 1.5rem;">Daftar Stok Saat Ini</h2>
+                <div id="admin-product-list" class="grid"></div>
             </section>
         </main>
     </div>
 
     <script type="module" src="main.js"></script>
     <script>
-        function showSection(id) {
-            document.querySelectorAll('.admin-view').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            event.target.closest('.nav-item').classList.add('active');
+        // Script sederhana untuk ganti tab tanpa error
+        function switchTab(tabId) {
+            // Sembunyikan semua section
+            document.querySelectorAll('.section-view').forEach(el => el.classList.remove('active'));
+            // Hilangkan active dari tombol nav
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            
+            // Tampilkan section yang dipilih
+            document.getElementById(tabId).classList.add('active');
+            // Tandai tombol yang diklik (workaround event)
+            event.target.classList.add('active');
         }
+        window.switchTab = switchTab; // Expose ke window agar bisa dipanggil onclick
     </script>
 </body>
 </html>
