@@ -34,7 +34,6 @@ const createCardHTML = (key, data, isAdmin) => {
     let btns = '';
     
     if (isAdmin) {
-        // --- FITUR INTEGRASI: TOMBOL JUAL OTOMATIS ---
         btns = `
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem">
                 <button class="btn btn-success btn-sm" onclick="prosesJual('${key}', '${data.brand} ${data.model}', ${data.price})">✅ Terjual</button>
@@ -154,7 +153,6 @@ const renderEmployees = (snapshot) => {
             const data = child.val();
             const key = child.key;
             
-            // --- FITUR INTEGRASI: TOMBOL BAYAR GAJI OTOMATIS ---
             tableBody.innerHTML += `
                 <tr>
                     <td style="font-weight:600">${data.name}</td>
@@ -267,42 +265,36 @@ if (filterSelect) {
     });
 }
 
-// --- GLOBAL FUNCTIONS & INTEGRATION LOGIC ---
-
 window.hapusData = (node, key) => {
     if (confirm("Hapus data ini permanen?")) {
         remove(ref(db, `${node}/${key}`)).catch(err => alert("Gagal hapus"));
     }
 };
 
-// 1. INTEGRASI PRODUK -> KEUANGAN
 window.prosesJual = (key, name, price) => {
     if(confirm(`Konfirmasi Penjualan: ${name} seharga ${formatRupiah(price)}?\n\nOtomatis masuk ke Pemasukan & Hapus dari stok.`)) {
-        // Step 1: Catat Keuangan
         push(financeRef, {
             category: "Penjualan Unit",
-            method: "Cash / Tunai", // Default, bisa diubah manual nanti kalau perlu
+            method: "Cash / Tunai", 
             type: "in",
             amount: price,
             desc: `SOLD OUT: ${name}`,
             date: new Date().toISOString()
         })
         .then(() => {
-            // Step 2: Hapus Stok
             remove(ref(db, `products/${key}`));
             alert("Berhasil! Uang masuk & Stok berkurang.");
-            window.switchTab('finance-view'); // Pindah tab agar admin lihat uangnya
+            window.switchTab('finance-view');
         })
         .catch(err => alert("Error: " + err.message));
     }
 };
 
-// 2. INTEGRASI KARYAWAN -> KEUANGAN
 window.prosesGaji = (name, salary) => {
     if(confirm(`Bayar gaji untuk ${name} sebesar ${formatRupiah(salary)}?\n\nOtomatis masuk ke Pengeluaran.`)) {
         push(financeRef, {
             category: "Gaji Karyawan",
-            method: "Transfer BCA", // Default
+            method: "Transfer BCA",
             type: "out",
             amount: salary,
             desc: `Gaji Bulanan: ${name}`,
