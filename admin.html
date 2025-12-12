@@ -38,7 +38,7 @@
             <div class="logo" style="margin-bottom: 3rem;">Atlantis<span>HQ</span></div>
             <nav style="flex: 1;">
                 <button class="nav-item active" onclick="switchTab('products-view')">📦 Manajemen Produk</button>
-                <button class="nav-item" onclick="switchTab('finance-view')">💰 Keuangan & Arus Kas</button>
+                <button class="nav-item" onclick="switchTab('finance-view')">💰 Keuangan & Cashflow</button>
                 <button class="nav-item" onclick="switchTab('employees-view')">👥 Data Karyawan</button>
             </nav>
             <button id="logout-btn" class="nav-item" style="color: var(--danger);">🚪 Keluar Sistem</button>
@@ -103,7 +103,19 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="form-group" style="margin-bottom: 1.5rem;">
+                        
+                        <div class="form-row" style="background: #F1F5F9; padding: 1rem; border-radius: 8px;">
+                            <div class="form-group">
+                                <label>Link Tokopedia (Spesifik Item)</label>
+                                <input type="url" id="prod-tokopedia" class="form-input" placeholder="https://tokopedia.com/..." required>
+                            </div>
+                            <div class="form-group">
+                                <label>Link Shopee (Spesifik Item)</label>
+                                <input type="url" id="prod-shopee" class="form-input" placeholder="https://shopee.co.id/..." required>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin: 1.5rem 0;">
                             <label>URL Gambar</label>
                             <input type="url" id="prod-image" class="form-input" placeholder="https://..." required>
                         </div>
@@ -116,7 +128,7 @@
             </section>
 
             <section id="finance-view" class="view-section">
-                <h2 class="section-title" style="text-align: left;">Keuangan & Arus Kas</h2>
+                <h2 class="section-title" style="text-align: left;">Keuangan & Cashflow</h2>
                 
                 <div class="stat-grid">
                     <div class="stat-card">
@@ -134,11 +146,34 @@
                 </div>
 
                 <div class="form-card">
-                    <h3 style="margin-bottom: 1.5rem;">Catat Transaksi Baru</h3>
+                    <h3 style="margin-bottom: 1.5rem;">Input Transaksi Detail</h3>
                     <form id="finance-form">
                         <div class="form-row">
                             <div class="form-group">
-                                <label>Jenis Transaksi</label>
+                                <label>Kategori Transaksi</label>
+                                <select id="fin-category" class="form-select">
+                                    <option value="Penjualan Unit">Penjualan Unit</option>
+                                    <option value="Jasa Service">Jasa Service</option>
+                                    <option value="Belanja Stok">Belanja Stok</option>
+                                    <option value="Gaji Karyawan">Gaji Karyawan</option>
+                                    <option value="Operasional">Operasional (Listrik/Air/Net)</option>
+                                    <option value="Marketing">Marketing (Ads)</option>
+                                    <option value="Lainnya">Lainnya</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Metode Pembayaran</label>
+                                <select id="fin-method" class="form-select">
+                                    <option value="Transfer BCA">Transfer BCA</option>
+                                    <option value="Transfer Mandiri">Transfer Mandiri</option>
+                                    <option value="Cash / Tunai">Cash / Tunai</option>
+                                    <option value="QRIS">QRIS</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Jenis Arus Kas</label>
                                 <select id="fin-type" class="form-select">
                                     <option value="in">Pemasukan (Income)</option>
                                     <option value="out">Pengeluaran (Expense)</option>
@@ -150,8 +185,8 @@
                             </div>
                         </div>
                         <div class="form-group" style="margin-bottom: 1.5rem;">
-                            <label>Keterangan</label>
-                            <input type="text" id="fin-desc" class="form-input" placeholder="Contoh: Penjualan Asus ROG / Bayar Listrik" required>
+                            <label>Keterangan Detail</label>
+                            <input type="text" id="fin-desc" class="form-input" placeholder="Contoh: Unit ROG S/N 12345 terjual ke Pak Budi" required>
                         </div>
                         <button type="submit" class="btn btn-primary">Simpan Transaksi</button>
                     </form>
@@ -162,7 +197,9 @@
                         <thead>
                             <tr>
                                 <th>Tanggal</th>
+                                <th>Kategori</th>
                                 <th>Keterangan</th>
+                                <th>Metode</th>
                                 <th>Jenis</th>
                                 <th>Nominal</th>
                                 <th>Aksi</th>
@@ -229,9 +266,3 @@
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             event.target.classList.add('active');
-            if(window.innerWidth < 1024) document.querySelector('.sidebar').classList.remove('open');
-        }
-        window.switchTab = switchTab;
-    </script>
-</body>
-</html>
