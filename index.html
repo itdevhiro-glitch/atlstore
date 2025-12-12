@@ -10,12 +10,12 @@
 <body>
 
     <nav class="navbar">
-        <div class="container nav-wrapper">
+        <div class="container nav-flex">
             <div class="brand">Atlantis<span class="brand-highlight">Store</span></div>
             <div class="nav-menu">
                 <a href="index.html" class="nav-link active">Beranda</a>
                 <a href="barang.html" class="nav-link">Katalog</a>
-                <a href="https://wa.me/6285946257633" class="btn-nav">Hubungi Sales</a>
+                <a href="https://wa.me/6285946257633" class="btn btn-primary btn-sm">Hubungi Sales</a>
             </div>
             <button class="mobile-toggle">☰</button>
         </div>
@@ -28,8 +28,8 @@
                 <h1>Mitra IT Terpercaya <br>Untuk Produktivitas</h1>
                 <p>Menyediakan jajaran laptop bisnis dan gaming dengan standar Quality Control industri. Garansi jelas, unit terjamin, dan dukungan teknis profesional.</p>
                 <div class="hero-actions">
-                    <a href="barang.html" class="btn-primary">Lihat Katalog</a>
-                    <a href="#featured" class="btn-secondary">Rekomendasi</a>
+                    <a href="barang.html" class="btn btn-primary">Lihat Katalog</a>
+                    <a href="#featured" class="btn btn-secondary">Rekomendasi</a>
                 </div>
                 <div class="stats-row">
                     <div class="stat-item">
@@ -61,12 +61,14 @@
                 <p>Unit terbaik minggu ini berdasarkan performa dan harga.</p>
             </div>
             
-            <div id="recommendation-grid" class="product-grid">
-                <div class="loading-state">Memuat data rekomendasi...</div>
+            <div id="recommendation-grid" class="grid">
+                <div class="loading-state" style="grid-column: 1/-1; text-align: center; color: #64748b;">
+                    Memuat data rekomendasi...
+                </div>
             </div>
 
-            <div class="center-action">
-                <a href="barang.html" class="btn-outline">Cari Model Lain &rarr;</a>
+            <div style="text-align: center; margin-top: 3rem;">
+                <a href="barang.html" class="btn btn-outline">Cari Model Lain &rarr;</a>
             </div>
         </div>
     </section>
@@ -94,6 +96,7 @@
 
     <script type="module" src="main.js"></script>
     <script>
+        // Script Toggle Mobile Menu (Sesuai dengan CSS nav-menu)
         document.querySelector('.mobile-toggle').addEventListener('click', () => {
             document.querySelector('.nav-menu').classList.toggle('active');
         });
