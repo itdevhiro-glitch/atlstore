@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atlantis Store - Professional Laptop</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>Atlantis Store - Professional Laptop Solution</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -15,7 +15,7 @@
             <ul class="nav-links">
                 <li><a href="#recommendation">Rekomendasi</a></li>
                 <li><a href="#catalog">Katalog</a></li>
-                <li><a href="https://wa.me/6285946257633" class="btn btn-primary btn-sm">Hubungi Kami</a></li>
+                <li><a href="https://wa.me/6285946257633" class="btn btn-primary btn-sm">Hubungi Sales</a></li>
             </ul>
         </div>
     </nav>
@@ -23,23 +23,26 @@
     <header class="hero">
         <div class="container">
             <h1>Solusi Laptop Profesional</h1>
-            <p>Jual beli laptop baru & bekas berkualitas. Aman, Terpercaya, Bergaransi.</p>
-            <a href="#catalog" class="btn btn-primary">Lihat Katalog</a>
+            <p>Pusat jual beli laptop berkualitas dengan standar quality control ketat dan garansi terpercaya di Garut.</p>
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <a href="#catalog" class="btn btn-primary">Lihat Katalog</a>
+                <a href="#recommendation" class="btn btn-outline">Rekomendasi</a>
+            </div>
         </div>
     </header>
 
     <section id="recommendation" class="section">
         <div class="container">
-            <h2 class="section-title">Rekomendasi Terbaik</h2>
+            <h2 class="section-title">Pilihan Editor</h2>
             <div id="recommendation-grid" class="grid"></div>
         </div>
     </section>
 
-    <section id="catalog" class="section" style="background-color: #F1F5F9;">
+    <section id="catalog" class="section" style="background-color: #F8FAFC;">
         <div class="container">
-            <h2 class="section-title">Katalog Produk</h2>
-            <div class="filter-container">
-                <select id="brand-filter" class="filter-select">
+            <h2 class="section-title">Katalog Lengkap</h2>
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <select id="brand-filter" class="form-select" style="max-width: 200px; display: inline-block;">
                     <option value="all">Semua Brand</option>
                     <option value="Asus">Asus</option>
                     <option value="Lenovo">Lenovo</option>
@@ -53,26 +56,24 @@
         </div>
     </section>
 
-    <footer class="footer">
+    <footer style="background: var(--text-main); color: #94A3B8; padding: 4rem 0;">
         <div class="container">
-            <div class="footer-grid">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 3rem; margin-bottom: 3rem;">
                 <div>
-                    <h3 style="color:var(--primary);">Atlantis Store</h3>
-                    <p>Partner IT terpercaya Anda di Garut. Menyediakan unit laptop berkualitas dengan quality control ketat.</p>
-                    <br>
-                    <small>Owner: Rahmat Hidayat</small>
+                    <h3 style="color: white; margin-bottom: 1rem; font-size: 1.2rem;">Atlantis Store</h3>
+                    <p>Partner IT terpercaya Anda. Menyediakan unit laptop berkualitas dengan jaminan mutu dan pelayanan after-sales terbaik.</p>
                 </div>
                 <div>
-                    <h3>Kontak</h3>
-                    <p>📍 Balong, RT.01/04, Suci, Karangpawitan, Garut</p>
-                    <p>📞 0859-4625-7633</p>
+                    <h3 style="color: white; margin-bottom: 1rem; font-size: 1.2rem;">Lokasi</h3>
+                    <p>Balong, RT.01/04, Suci<br>Karangpawitan, Garut<br>Jawa Barat</p>
                 </div>
                 <div>
-                    <h3>Social Media</h3>
-                    <a href="https://instagram.com/atl.aquatech.service" target="_blank">📸 @atl.aquatech.service</a>
+                    <h3 style="color: white; margin-bottom: 1rem; font-size: 1.2rem;">Kontak</h3>
+                    <p>0859-4625-7633</p>
+                    <p style="margin-top:0.5rem">@atl.aquatech.service</p>
                 </div>
             </div>
-            <div class="footer-bottom">
+            <div style="border-top: 1px solid #334155; padding-top: 2rem; text-align: center; font-size: 0.9rem;">
                 &copy; 2025 Atlantis Store. All rights reserved.
             </div>
         </div>
