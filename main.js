@@ -23,17 +23,17 @@ const formatRupiah = (number) => {
 };
 
 const createCard = (key, data, isAdmin = false) => {
-    const ramTags = data.ram.split(',').map(r => `<span class="tag">${r.trim()}</span>`).join('');
-    const ssdTags = data.ssd.split(',').map(s => `<span class="tag">${s.trim()}</span>`).join('');
+    const ramTags = data.ram.split(',').map(r => `<span class="tag">RAM ${r.trim()}</span>`).join('');
+    const ssdTags = data.ssd.split(',').map(s => `<span class="tag">SSD ${s.trim()}</span>`).join('');
 
-    let buttons = '';
+    let actionHTML = '';
     if (isAdmin) {
-        buttons = `<button class="btn btn-danger btn-sm" onclick="deleteProduct('${key}')">Hapus Item</button>`;
+        actionHTML = `<button class="btn btn-danger btn-sm" onclick="deleteProduct('${key}')">Hapus Produk</button>`;
     } else {
-        buttons = `
+        actionHTML = `
             <div class="action-buttons">
-                <a href="#" class="btn btn-sm btn-disabled">Tokopedia (Soon)</a>
-                <a href="#" class="btn btn-sm btn-disabled">Shopee (Soon)</a>
+                <a href="#" class="btn btn-sm btn-disabled">Tokopedia</a>
+                <a href="#" class="btn btn-sm btn-disabled">Shopee</a>
             </div>
         `;
     }
@@ -45,13 +45,12 @@ const createCard = (key, data, isAdmin = false) => {
                 <span class="product-brand">${data.brand}</span>
                 <h3 class="product-title">${data.model}</h3>
                 <div class="product-specs">
-                    <div class="spec-item">🧠 ${data.cpu}</div>
-                    <div class="spec-item">🎮 ${data.gpu}</div>
+                    <span>⚡ ${data.cpu}</span>
+                    <span>🎮 ${data.gpu}</span>
                 </div>
-                <div class="tag-container">${ramTags}</div>
-                <div class="tag-container">${ssdTags}</div>
+                <div class="tag-container">${ramTags}${ssdTags}</div>
                 <div class="product-price">${formatRupiah(data.price)}</div>
-                ${buttons}
+                ${actionHTML}
             </div>
         </div>
     `;
@@ -92,17 +91,27 @@ if (loginForm) {
         const email = document.getElementById('admin-email').value;
         const pass = document.getElementById('admin-pass').value;
         const errorMsg = document.getElementById('login-error');
+        const btn = e.target.querySelector('button');
+        
+        btn.innerText = "Verifying...";
+        btn.disabled = true;
 
         signInWithEmailAndPassword(auth, email, pass)
             .then(() => { errorMsg.innerText = ""; })
-            .catch((error) => { errorMsg.innerText = "Login Gagal: " + error.message; });
+            .catch((error) => { 
+                errorMsg.innerText = "Akses Ditolak: Password Salah / User Tidak Dikenal";
+                btn.innerText = "Secure Login";
+                btn.disabled = false;
+            });
     });
 }
 
 const logoutBtn = document.getElementById('logout-btn');
 if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
-        signOut(auth).then(() => window.location.reload());
+        if(confirm("Logout dari sesi admin?")) {
+            signOut(auth).then(() => window.location.reload());
+        }
     });
 }
 
@@ -138,12 +147,13 @@ if (form) {
             ssd: document.getElementById('ssd').value,
             price: document.getElementById('price').value,
             image: document.getElementById('image').value, 
-            isRecommended: document.getElementById('isRecommended').value
+            isRecommended: document.getElementById('isRecommended').value,
+            date: Date.now()
         };
 
         push(productsRef, newProduct)
             .then(() => {
-                alert('Data berhasil disimpan!');
+                alert('Produk Berhasil Ditambahkan ke Katalog!');
                 form.reset();
             })
             .catch((error) => alert('Error: Pastikan Anda Login sebagai Admin!'));
@@ -166,7 +176,7 @@ if (brandFilter) {
 }
 
 window.deleteProduct = (key) => {
-    if(confirm('Yakin ingin menghapus produk ini?')) {
+    if(confirm('Hapus produk ini dari database secara permanen?')) {
         remove(ref(db, `products/${key}`))
         .catch(err => alert("Gagal menghapus: Akses Ditolak"));
     }
