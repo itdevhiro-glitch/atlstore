@@ -3,101 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atlantis Store - Premium Laptop Solution</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Atlantis Store - Professional Laptop</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <nav class="navbar">
-        <div class="container nav-container">
-            <div class="logo">Atlantis<span class="dot">.</span></div>
+        <div class="container nav-flex">
+            <div class="logo">Atlantis<span>Store</span></div>
             <ul class="nav-links">
                 <li><a href="#recommendation">Rekomendasi</a></li>
                 <li><a href="#catalog">Katalog</a></li>
-                <li><a href="https://wa.me/6285946257633" class="btn-nav">Hubungi Kami</a></li>
+                <li><a href="https://wa.me/6285946257633" class="btn btn-primary btn-sm">Hubungi Kami</a></li>
             </ul>
         </div>
     </nav>
 
     <header class="hero">
-        <div class="hero-bg"></div>
-        <div class="container hero-content">
-            <span class="hero-badge">New Arrival 2025</span>
-            <h1>Upgrade Produktivitas <br>Dengan Laptop Terbaik</h1>
-            <p>Pusat jual beli laptop baru dan bekas berkualitas. Garansi terjamin untuk kebutuhan profesional dan gaming Anda.</p>
-            <div class="hero-buttons">
-                <a href="#catalog" class="btn btn-primary btn-lg">Lihat Katalog</a>
-                <a href="#recommendation" class="btn btn-outline btn-lg">Rekomendasi</a>
-            </div>
+        <div class="container">
+            <h1>Solusi Laptop Profesional</h1>
+            <p>Jual beli laptop baru & bekas berkualitas. Aman, Terpercaya, Bergaransi.</p>
+            <a href="#catalog" class="btn btn-primary">Lihat Katalog</a>
         </div>
     </header>
 
     <section id="recommendation" class="section">
         <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Pilihan Editor</h2>
-                <p class="section-subtitle">Laptop terbaik yang kami rekomendasikan bulan ini</p>
-            </div>
-            <div id="recommendation-grid" class="product-grid"></div>
+            <h2 class="section-title">Rekomendasi Terbaik</h2>
+            <div id="recommendation-grid" class="grid"></div>
         </div>
     </section>
 
-    <section id="catalog" class="section bg-soft">
+    <section id="catalog" class="section" style="background-color: #F1F5F9;">
         <div class="container">
-            <div class="catalog-header">
-                <div>
-                    <h2 class="section-title">Katalog Lengkap</h2>
-                    <p class="section-subtitle">Temukan spesifikasi yang pas untuk Anda</p>
-                </div>
-                <div class="filter-wrapper">
-                    <select id="brand-filter" class="custom-select">
-                        <option value="all">Semua Brand</option>
-                        <option value="Asus">Asus</option>
-                        <option value="Lenovo">Lenovo</option>
-                        <option value="HP">HP</option>
-                        <option value="Acer">Acer</option>
-                        <option value="MacBook">MacBook</option>
-                        <option value="MSI">MSI</option>
-                    </select>
-                </div>
+            <h2 class="section-title">Katalog Produk</h2>
+            <div class="filter-container">
+                <select id="brand-filter" class="filter-select">
+                    <option value="all">Semua Brand</option>
+                    <option value="Asus">Asus</option>
+                    <option value="Lenovo">Lenovo</option>
+                    <option value="HP">HP</option>
+                    <option value="Acer">Acer</option>
+                    <option value="MacBook">MacBook</option>
+                    <option value="MSI">MSI</option>
+                </select>
             </div>
-            <div id="catalog-grid" class="product-grid"></div>
+            <div id="catalog-grid" class="grid"></div>
         </div>
     </section>
 
-    <footer class="footer-pro">
+    <footer class="footer">
         <div class="container">
             <div class="footer-grid">
-                <div class="footer-brand">
-                    <div class="logo white">Atlantis<span class="dot-blue">.</span></div>
-                    <p>Solusi laptop profesional dan gaming terpercaya di Garut. Quality Control ketat, Aftersales terjamin.</p>
-                    <div class="owner-badge">
-                        <span>Owner: Rahmat Hidayat</span>
-                    </div>
+                <div>
+                    <h3 style="color:var(--primary);">Atlantis Store</h3>
+                    <p>Partner IT terpercaya Anda di Garut. Menyediakan unit laptop berkualitas dengan quality control ketat.</p>
+                    <br>
+                    <small>Owner: Rahmat Hidayat</small>
                 </div>
-                
-                <div class="footer-links">
-                    <h3>Kontak & Store</h3>
-                    <ul>
-                        <li>📍 Balong, RT. 001, RW. 004, Desa Suci,<br>Kec. Karangpawitan, Kab. Garut</li>
-                        <li>📞 <a href="https://wa.me/6285946257633">0859-4625-7633 (WhatsApp)</a></li>
-                    </ul>
+                <div>
+                    <h3>Kontak</h3>
+                    <p>📍 Balong, RT.01/04, Suci, Karangpawitan, Garut</p>
+                    <p>📞 0859-4625-7633</p>
                 </div>
-
-                <div class="footer-social">
-                    <h3>Ikuti Update</h3>
-                    <a href="https://instagram.com/atl.aquatech.service" target="_blank" class="social-card">
-                        <div class="social-icon">📸</div>
-                        <div>
-                            <span>Instagram</span>
-                            <small>@atl.aquatech.service</small>
-                        </div>
-                    </a>
+                <div>
+                    <h3>Social Media</h3>
+                    <a href="https://instagram.com/atl.aquatech.service" target="_blank">📸 @atl.aquatech.service</a>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2025 Atlantis Store. Professional Laptop Solution.</p>
+                &copy; 2025 Atlantis Store. All rights reserved.
             </div>
         </div>
     </footer>
