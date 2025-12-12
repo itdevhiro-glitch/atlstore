@@ -37,237 +37,209 @@
         <aside class="sidebar">
             <div class="logo" style="margin-bottom: 3rem;">Atlantis<span>HQ</span></div>
             <nav style="flex: 1;">
-                <button class="nav-item active" onclick="switchTab('products-view')">📦 Manajemen Produk</button>
-                <button class="nav-item" onclick="switchTab('finance-view')">💰 Keuangan & Cashflow</button>
-                <button class="nav-item" onclick="switchTab('employees-view')">👥 Data Karyawan</button>
+                <button class="nav-item active" onclick="switchTab('overview-view')">📊 Dashboard</button>
+                <button class="nav-item" onclick="switchTab('products-view')">📦 Manajemen Produk</button>
+                <button class="nav-item" onclick="switchTab('finance-view')">💰 Keuangan</button>
+                <button class="nav-item" onclick="switchTab('employees-view')">👥 Karyawan</button>
             </nav>
             <button id="logout-btn" class="nav-item" style="color: var(--danger);">🚪 Keluar Sistem</button>
         </aside>
 
         <main class="main-content">
             
-            <section id="products-view" class="view-section active">
-                <h2 class="section-title" style="text-align: left;">Manajemen Produk</h2>
+            <section id="overview-view" class="view-section active">
+                <h2 class="section-title" style="text-align: left;">Ringkasan Bisnis</h2>
                 
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Total Stok Unit</div>
+                        <div id="stat-total-products" class="stat-value">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Total Aset (Estimasi)</div>
+                        <div id="stat-asset-value" class="stat-value text-green">Rp 0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Transaksi Bulan Ini</div>
+                        <div id="stat-monthly-trx" class="stat-value">0</div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; margin-top: 2rem;">
+                    <div class="table-container">
+                        <div style="padding: 1.5rem; border-bottom: 1px solid var(--border); font-weight: 700;">
+                            Transaksi Terakhir
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Tanggal</th>
+                                    <th>Keterangan</th>
+                                    <th>Nominal</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashboard-recent-trx"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="stat-card">
+                        <h4 style="margin-bottom: 1rem;">Produk Termahal</h4>
+                        <div id="top-product-list" style="display: flex; flex-direction: column; gap: 1rem;">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="products-view" class="view-section">
+                <h2 class="section-title" style="text-align: left;">Manajemen Produk</h2>
                 <div class="form-card">
                     <h3 style="margin-bottom: 1.5rem;">Input Unit Baru</h3>
                     <form id="product-form">
                         <div class="form-row">
                             <div class="form-group">
-                                <label>Brand (Lengkap)</label>
+                                <label>Brand</label>
                                 <select id="prod-brand" class="form-select">
-                                    <optgroup label="Populer">
-                                        <option value="Asus">Asus (ROG/TUF/Vivo)</option>
-                                        <option value="Lenovo">Lenovo (Legion/ThinkPad)</option>
-                                        <option value="HP">HP (Omen/Pavilion)</option>
-                                        <option value="Acer">Acer (Nitro/Predator)</option>
-                                        <option value="Apple">Apple (MacBook)</option>
-                                    </optgroup>
-                                    <optgroup label="Internasional Lainnya">
-                                        <option value="MSI">MSI</option>
-                                        <option value="Dell">Dell / Alienware</option>
-                                        <option value="Microsoft">Microsoft Surface</option>
-                                        <option value="Razer">Razer</option>
-                                        <option value="Samsung">Samsung</option>
-                                        <option value="Huawei">Huawei</option>
-                                        <option value="Xiaomi">Xiaomi</option>
-                                        <option value="Gigabyte">Gigabyte</option>
-                                        <option value="Infinix">Infinix</option>
-                                    </optgroup>
-                                    <optgroup label="Brand Lokal">
-                                        <option value="Axioo">Axioo</option>
-                                        <option value="Advan">Advan</option>
-                                        <option value="Zyrex">Zyrex</option>
-                                    </optgroup>
+                                    <option value="Asus">Asus</option>
+                                    <option value="Lenovo">Lenovo</option>
+                                    <option value="HP">HP</option>
+                                    <option value="Acer">Acer</option>
+                                    <option value="Apple">Apple</option>
+                                    <option value="MSI">MSI</option>
+                                    <option value="Dell">Dell</option>
                                     <option value="Lainnya">Lainnya</option>
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label>Model / Seri</label>
-                                <input type="text" id="prod-model" class="form-input" placeholder="e.g. Legion 5 Pro" required>
+                                <label>Model</label>
+                                <input type="text" id="prod-model" class="form-input" required>
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
-                                <label>Processor</label>
-                                <input type="text" id="prod-cpu" class="form-input" placeholder="e.g. Core i7 Gen 12" required>
+                                <label>CPU</label>
+                                <input type="text" id="prod-cpu" class="form-input" required>
                             </div>
                             <div class="form-group">
-                                <label>Kartu Grafis</label>
-                                <input type="text" id="prod-gpu" class="form-input" placeholder="e.g. RTX 3060 6GB" required>
+                                <label>GPU</label>
+                                <input type="text" id="prod-gpu" class="form-input" required>
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
                                 <label>RAM</label>
-                                <input type="text" id="prod-ram" class="form-input" placeholder="e.g. 16GB DDR5" required>
+                                <input type="text" id="prod-ram" class="form-input" required>
                             </div>
                             <div class="form-group">
-                                <label>Penyimpanan</label>
-                                <input type="text" id="prod-ssd" class="form-input" placeholder="e.g. 512GB NVMe" required>
+                                <label>SSD</label>
+                                <input type="text" id="prod-ssd" class="form-input" required>
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
-                                <label>Harga Jual (Rp)</label>
+                                <label>Harga (Rp)</label>
                                 <input type="number" id="prod-price" class="form-input" required>
                             </div>
                             <div class="form-group">
                                 <label>Status</label>
                                 <select id="prod-isRec" class="form-select">
-                                    <option value="false">Katalog Biasa</option>
-                                    <option value="true">Rekomendasi (Featured)</option>
+                                    <option value="false">Katalog</option>
+                                    <option value="true">Rekomendasi</option>
                                 </select>
                             </div>
                         </div>
-                        
-                        <div class="form-row" style="background: #F1F5F9; padding: 1rem; border-radius: 8px;">
+                        <div class="form-row">
                             <div class="form-group">
-                                <label>Link Tokopedia</label>
-                                <input type="url" id="prod-tokopedia" class="form-input" placeholder="https://tokopedia.com/...">
+                                <label>Tokopedia</label>
+                                <input type="url" id="prod-tokopedia" class="form-input">
                             </div>
                             <div class="form-group">
-                                <label>Link Shopee</label>
-                                <input type="url" id="prod-shopee" class="form-input" placeholder="https://shopee.co.id/...">
+                                <label>Shopee</label>
+                                <input type="url" id="prod-shopee" class="form-input">
                             </div>
                         </div>
-
-                        <div class="form-group" style="margin: 1.5rem 0;">
-                            <label>URL Gambar</label>
-                            <input type="url" id="prod-image" class="form-input" placeholder="https://..." required>
+                        <div class="form-group" style="margin-bottom: 1.5rem;">
+                            <label>Gambar URL</label>
+                            <input type="url" id="prod-image" class="form-input" required>
                         </div>
-                        <button type="submit" class="btn btn-primary" style="width: 100%;">Terbitkan Produk</button>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Simpan Produk</button>
                     </form>
                 </div>
-
-                <h3 style="margin-bottom: 1rem;">Daftar Stok (Klik "Terjual" untuk Masuk Keuangan)</h3>
                 <div id="admin-product-list" class="grid"></div>
             </section>
 
             <section id="finance-view" class="view-section">
-                <h2 class="section-title" style="text-align: left;">Keuangan & Cashflow</h2>
-                
+                <h2 class="section-title" style="text-align: left;">Keuangan</h2>
                 <div class="stat-grid">
                     <div class="stat-card">
-                        <div class="stat-label">Total Pemasukan</div>
+                        <div class="stat-label">Pemasukan</div>
                         <div id="fin-income" class="stat-value text-green">Rp 0</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-label">Total Pengeluaran</div>
+                        <div class="stat-label">Pengeluaran</div>
                         <div id="fin-expense" class="stat-value text-red">Rp 0</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-label">Saldo Bersih</div>
-                        <div id="fin-balance" class="stat-value" style="color: var(--primary);">Rp 0</div>
+                        <div class="stat-label">Saldo</div>
+                        <div id="fin-balance" class="stat-value">Rp 0</div>
                     </div>
                 </div>
-
                 <div class="form-card">
-                    <h3 style="margin-bottom: 1.5rem;">Input Transaksi Manual</h3>
                     <form id="finance-form">
                         <div class="form-row">
                             <div class="form-group">
-                                <label>Kategori Transaksi</label>
+                                <label>Kategori</label>
                                 <select id="fin-category" class="form-select">
-                                    <option value="Jasa Service">Jasa Service</option>
-                                    <option value="Belanja Stok">Belanja Stok</option>
-                                    <option value="Operasional">Operasional (Listrik/Air/Net)</option>
-                                    <option value="Marketing">Marketing (Ads)</option>
-                                    <option value="Penjualan Unit">Penjualan Unit (Manual)</option>
-                                    <option value="Gaji Karyawan">Gaji Karyawan (Manual)</option>
+                                    <option value="Operasional">Operasional</option>
+                                    <option value="Penjualan Unit">Penjualan Unit</option>
+                                    <option value="Gaji Karyawan">Gaji Karyawan</option>
                                     <option value="Lainnya">Lainnya</option>
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label>Metode Pembayaran</label>
-                                <select id="fin-method" class="form-select">
-                                    <option value="Transfer BCA">Transfer BCA</option>
-                                    <option value="Transfer Mandiri">Transfer Mandiri</option>
-                                    <option value="Cash / Tunai">Cash / Tunai</option>
-                                    <option value="QRIS">QRIS</option>
+                                <label>Jenis</label>
+                                <select id="fin-type" class="form-select">
+                                    <option value="in">Pemasukan</option>
+                                    <option value="out">Pengeluaran</option>
                                 </select>
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
-                                <label>Jenis Arus Kas</label>
-                                <select id="fin-type" class="form-select">
-                                    <option value="in">Pemasukan (Income)</option>
-                                    <option value="out">Pengeluaran (Expense)</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Nominal (Rp)</label>
+                                <label>Nominal</label>
                                 <input type="number" id="fin-amount" class="form-input" required>
                             </div>
+                            <div class="form-group">
+                                <label>Ket.</label>
+                                <input type="text" id="fin-desc" class="form-input" required>
+                            </div>
                         </div>
-                        <div class="form-group" style="margin-bottom: 1.5rem;">
-                            <label>Keterangan Detail</label>
-                            <input type="text" id="fin-desc" class="form-input" placeholder="Keterangan transaksi..." required>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Simpan Transaksi</button>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
                     </form>
                 </div>
-
                 <div class="table-container">
                     <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Tanggal</th>
-                                <th>Kategori</th>
-                                <th>Keterangan</th>
-                                <th>Metode</th>
-                                <th>Jenis</th>
-                                <th>Nominal</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
                         <tbody id="finance-table-body"></tbody>
                     </table>
                 </div>
             </section>
 
             <section id="employees-view" class="view-section">
-                <h2 class="section-title" style="text-align: left;">Manajemen Karyawan</h2>
-
+                <h2 class="section-title" style="text-align: left;">Karyawan</h2>
                 <div class="form-card">
-                    <h3 style="margin-bottom: 1.5rem;">Tambah Karyawan</h3>
                     <form id="employee-form">
                         <div class="form-row">
-                            <div class="form-group">
-                                <label>Nama Lengkap</label>
-                                <input type="text" id="emp-name" class="form-input" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Posisi / Divisi</label>
-                                <input type="text" id="emp-role" class="form-input" placeholder="e.g. Teknisi / Sales" required>
-                            </div>
+                            <input type="text" id="emp-name" class="form-input" placeholder="Nama" required>
+                            <input type="text" id="emp-role" class="form-input" placeholder="Posisi" required>
                         </div>
                         <div class="form-row">
-                            <div class="form-group">
-                                <label>Nomor Telepon</label>
-                                <input type="text" id="emp-phone" class="form-input" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Gaji Pokok (Rp)</label>
-                                <input type="number" id="emp-salary" class="form-input" required>
-                            </div>
+                            <input type="text" id="emp-phone" class="form-input" placeholder="Telepon" required>
+                            <input type="number" id="emp-salary" class="form-input" placeholder="Gaji" required>
                         </div>
-                        <button type="submit" class="btn btn-primary">Rekrut Karyawan</button>
+                        <button type="submit" class="btn btn-primary">Tambah</button>
                     </form>
                 </div>
-
                 <div class="table-container">
                     <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Nama</th>
-                                <th>Posisi</th>
-                                <th>Telepon</th>
-                                <th>Gaji</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
                         <tbody id="employee-table-body"></tbody>
                     </table>
                 </div>
