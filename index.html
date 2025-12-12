@@ -4,83 +4,99 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Atlantis Store - Professional Laptop Solution</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <nav class="navbar">
-        <div class="container nav-flex">
-            <div class="logo">Atlantis<span>Store</span></div>
-            <ul class="nav-links">
-                <li><a href="index.html" class="active">Beranda</a></li>
-                <li><a href="barang.html">Katalog Lengkap</a></li>
-                <li><a href="https://wa.me/6285946257633" class="btn btn-primary btn-sm">Hubungi Sales</a></li>
-            </ul>
+        <div class="container nav-wrapper">
+            <div class="brand">Atlantis<span class="brand-highlight">Store</span></div>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link active">Beranda</a>
+                <a href="barang.html" class="nav-link">Katalog</a>
+                <a href="https://wa.me/6285946257633" class="btn-nav">Hubungi Sales</a>
+            </div>
+            <button class="mobile-toggle">☰</button>
         </div>
     </nav>
 
-    <header class="hero">
-        <div class="container hero-content">
-            <div class="hero-text">
-                <span class="badge-pill">✨ Pusat Laptop #1 di Garut</span>
-                <h1>Upgrade Produktivitas <br>Dengan <span class="gradient-text">Laptop Terbaik</span></h1>
-                <p>Kami menghadirkan jajaran laptop profesional dan gaming pilihan dengan Quality Control ketat. Jaminan garansi aman, harga transparan, dan pelayanan after-sales terpercaya.</p>
-                
-                <div class="hero-btns">
-                    <a href="barang.html" class="btn btn-primary btn-glow">Lihat Katalog</a>
-                    <a href="#recommendation" class="btn btn-outline-light">Rekomendasi Editor</a>
+    <header class="hero-section">
+        <div class="container hero-wrapper">
+            <div class="hero-content">
+                <span class="badge">Professional Choice</span>
+                <h1>Mitra IT Terpercaya <br>Untuk Produktivitas</h1>
+                <p>Menyediakan jajaran laptop bisnis dan gaming dengan standar Quality Control industri. Garansi jelas, unit terjamin, dan dukungan teknis profesional.</p>
+                <div class="hero-actions">
+                    <a href="barang.html" class="btn-primary">Lihat Katalog</a>
+                    <a href="#featured" class="btn-secondary">Rekomendasi</a>
                 </div>
-
-                <div class="trust-badges">
-                    <div class="badge-item">✅ Garansi Resmi</div>
-                    <div class="badge-item">✅ QC Passed</div>
-                    <div class="badge-item">✅ Siap Pakai</div>
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <strong>100%</strong>
+                        <span>Original Unit</span>
+                    </div>
+                    <div class="stat-item">
+                        <strong>QC</strong>
+                        <span>Passed</span>
+                    </div>
+                    <div class="stat-item">
+                        <strong>30+</strong>
+                        <span>Ready Stock</span>
+                    </div>
                 </div>
             </div>
-
-            <div class="hero-image">
-                <div class="glowing-circle"></div>
-                <img src="https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?q=80&w=1000&auto=format&fit=crop" alt="Laptop Gaming Professional" class="floating-laptop">
+            <div class="hero-visual">
+                <div class="visual-card">
+                    <img src="https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?q=80&w=1000&auto=format&fit=crop" alt="Laptop Premium">
+                </div>
             </div>
         </div>
     </header>
 
-    <section id="recommendation" class="section">
+    <section id="featured" class="section">
         <div class="container">
-            <h2 class="section-title">Pilihan Editor</h2>
-            <div id="recommendation-grid" class="grid">
-                <p style="text-align: center; grid-column: 1/-1; color: #64748B;">Sedang memuat rekomendasi...</p>
+            <div class="section-header">
+                <h2>Pilihan Editor</h2>
+                <p>Unit terbaik minggu ini berdasarkan performa dan harga.</p>
             </div>
-            <div style="text-align: center; margin-top: 3rem;">
-                <a href="barang.html" class="btn btn-outline">Cari Laptop Lainnya &rarr;</a>
+            
+            <div id="recommendation-grid" class="product-grid">
+                <div class="loading-state">Memuat data rekomendasi...</div>
+            </div>
+
+            <div class="center-action">
+                <a href="barang.html" class="btn-outline">Cari Model Lain &rarr;</a>
             </div>
         </div>
     </section>
 
-    <footer style="background: var(--text-main); color: #94A3B8; padding: 4rem 0;">
-        <div class="container">
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 3rem; margin-bottom: 3rem;">
-                <div>
-                    <h3 style="color: white; margin-bottom: 1rem; font-size: 1.2rem;">Atlantis Store</h3>
-                    <p>Partner IT terpercaya Anda. Menyediakan unit laptop berkualitas dengan jaminan mutu.</p>
-                </div>
-                <div>
-                    <h3 style="color: white; margin-bottom: 1rem; font-size: 1.2rem;">Lokasi</h3>
-                    <p>Balong, RT.01/04, Suci<br>Karangpawitan, Garut<br>Jawa Barat</p>
-                </div>
-                <div>
-                    <h3 style="color: white; margin-bottom: 1rem; font-size: 1.2rem;">Kontak</h3>
-                    <p>0859-4625-7633</p>
-                    <p style="margin-top:0.5rem">@atl.aquatech.service</p>
-                </div>
+    <footer class="footer">
+        <div class="container footer-wrapper">
+            <div class="footer-col">
+                <h3>Atlantis<span>Store</span></h3>
+                <p>Solusi perangkat keras profesional di Garut. Kami fokus pada kualitas unit dan kepuasan purna jual.</p>
             </div>
-            <div style="border-top: 1px solid #334155; padding-top: 2rem; text-align: center; font-size: 0.9rem;">
-                &copy; 2025 Atlantis Store. All rights reserved.
+            <div class="footer-col">
+                <h4>Alamat</h4>
+                <p>Balong, RT.01/04, Suci<br>Karangpawitan, Garut<br>Jawa Barat</p>
             </div>
+            <div class="footer-col">
+                <h4>Kontak</h4>
+                <p>WhatsApp: 0859-4625-7633</p>
+                <p>Instagram: @atl.aquatech.service</p>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2025 Atlantis Store. All rights reserved.</p>
         </div>
     </footer>
 
     <script type="module" src="main.js"></script>
+    <script>
+        document.querySelector('.mobile-toggle').addEventListener('click', () => {
+            document.querySelector('.nav-menu').classList.toggle('active');
+        });
+    </script>
 </body>
 </html>
