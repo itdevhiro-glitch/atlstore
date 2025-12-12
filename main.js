@@ -21,6 +21,8 @@ const productsRef = ref(db, 'products');
 const financeRef = ref(db, 'finance');
 const employeesRef = ref(db, 'employees');
 
+let allProducts = [];
+
 const formatRupiah = (num) => {
     return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num);
 };
@@ -44,8 +46,8 @@ const createCardHTML = (key, data, isAdmin) => {
         const linkTokped = data.linkTokopedia || '#';
         const linkShopee = data.linkShopee || '#';
         
-        let btnTokped = linkTokped !== '#' ? `<a href="${linkTokped}" target="_blank" class="btn btn-tokopedia btn-sm" style="text-align:center; display:block">Tokopedia</a>` : `<button class="btn btn-disabled btn-sm" style="background:#ddd; color:#999; width:100%">Tokopedia</button>`;
-        let btnShopee = linkShopee !== '#' ? `<a href="${linkShopee}" target="_blank" class="btn btn-shopee btn-sm" style="text-align:center; display:block">Shopee</a>` : `<button class="btn btn-disabled btn-sm" style="background:#ddd; color:#999; width:100%">Shopee</button>`;
+        let btnTokped = linkTokped !== '#' ? `<a href="${linkTokped}" target="_blank" class="btn btn-tokopedia btn-sm" style="text-align:center; display:block">Tokopedia</a>` : `<button class="btn btn-disabled btn-sm" style="width:100%">Tokopedia</button>`;
+        let btnShopee = linkShopee !== '#' ? `<a href="${linkShopee}" target="_blank" class="btn btn-shopee btn-sm" style="text-align:center; display:block">Shopee</a>` : `<button class="btn btn-disabled btn-sm" style="width:100%">Shopee</button>`;
 
         btns = `
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem">
@@ -73,107 +75,156 @@ const createCardHTML = (key, data, isAdmin) => {
     `;
 };
 
-const renderProducts = (snapshot, isAdmin = false) => {
-    const recContainer = document.getElementById('recommendation-grid');
-    const catContainer = document.getElementById('catalog-grid');
-    const adminContainer = document.getElementById('admin-product-list');
-
-    if (isAdmin) {
-        if (adminContainer) adminContainer.innerHTML = '';
-    } else {
-        if (recContainer) recContainer.innerHTML = '';
-        if (catContainer) catContainer.innerHTML = '';
-    }
-
-    if (!snapshot.exists()) {
-        const emptyMsg = '<p style="grid-column: 1/-1; text-align: center; padding: 2rem; color: #64748B;">Belum ada data produk tersedia.</p>';
-        if (isAdmin && adminContainer) adminContainer.innerHTML = emptyMsg;
-        if (!isAdmin && catContainer) catContainer.innerHTML = emptyMsg;
-        if (!isAdmin && recContainer) recContainer.innerHTML = '';
+const renderCatalog = (products) => {
+    const container = document.getElementById('full-catalog-grid');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    const countEl = document.getElementById('catalog-count');
+    
+    if (products.length === 0) {
+        container.innerHTML = '<p style="text-align: center; grid-column: 1/-1; color: #64748B; padding: 3rem;">Tidak ada produk yang cocok dengan filter.</p>';
+        if(countEl) countEl.innerText = '0 Produk';
         return;
     }
 
-    snapshot.forEach((child) => {
-        const data = child.val();
-        const key = child.key;
-        const html = createCardHTML(key, data, isAdmin);
+    if(countEl) countEl.innerText = `${products.length} Produk`;
 
-        if (isAdmin && adminContainer) {
-            adminContainer.innerHTML += html;
-        } 
-        else if (!isAdmin) {
-            if (catContainer) catContainer.innerHTML += html;
-            if (recContainer && data.isRecommended === 'true') {
-                recContainer.innerHTML += html;
-            }
+    products.forEach(item => {
+        container.innerHTML += createCardHTML(item.key, item.data, false);
+    });
+};
+
+const filterProducts = () => {
+    const search = document.getElementById('search-input').value.toLowerCase();
+    const brand = document.getElementById('filter-brand').value;
+    const priceRange = document.getElementById('filter-price').value;
+    const ramChecks = Array.from(document.querySelectorAll('.filter-ram:checked')).map(c => c.value);
+    const sort = document.getElementById('sort-price').value;
+
+    let filtered = allProducts.filter(item => {
+        const d = item.data;
+        const matchSearch = d.model.toLowerCase().includes(search) || d.brand.toLowerCase().includes(search);
+        const matchBrand = brand === 'all' || d.brand === brand;
+        
+        let matchPrice = true;
+        const p = parseInt(d.price);
+        if (priceRange === 'under-5') matchPrice = p < 5000000;
+        else if (priceRange === '5-10') matchPrice = p >= 5000000 && p <= 10000000;
+        else if (priceRange === '10-15') matchPrice = p > 10000000 && p <= 15000000;
+        else if (priceRange === 'above-15') matchPrice = p > 15000000;
+
+        let matchRam = true;
+        if (ramChecks.length > 0) {
+            matchRam = ramChecks.some(r => d.ram.includes(r));
+        }
+
+        return matchSearch && matchBrand && matchPrice && matchRam;
+    });
+
+    if (sort === 'low-high') filtered.sort((a, b) => a.data.price - b.data.price);
+    else if (sort === 'high-low') filtered.sort((a, b) => b.data.price - a.data.price);
+    else filtered.reverse(); 
+
+    renderCatalog(filtered);
+};
+
+const setupFilters = () => {
+    const inputs = ['search-input', 'filter-brand', 'filter-price', 'sort-price'];
+    inputs.forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.addEventListener('input', filterProducts);
+    });
+
+    document.querySelectorAll('.filter-ram').forEach(el => el.addEventListener('change', filterProducts));
+    
+    const reset = document.getElementById('reset-filter');
+    if(reset) {
+        reset.addEventListener('click', () => {
+            document.getElementById('search-input').value = '';
+            document.getElementById('filter-brand').value = 'all';
+            document.getElementById('filter-price').value = 'all';
+            document.getElementById('sort-price').value = 'newest';
+            document.querySelectorAll('.filter-ram').forEach(el => el.checked = false);
+            filterProducts();
+        });
+    }
+};
+
+const renderRecommendations = (snapshot) => {
+    const container = document.getElementById('recommendation-grid');
+    if (!container) return;
+    container.innerHTML = '';
+    
+    snapshot.forEach(child => {
+        const data = child.val();
+        if (data.isRecommended === 'true') {
+            container.innerHTML += createCardHTML(child.key, data, false);
         }
     });
 };
 
-const renderFinance = (snapshot) => {
-    const tableBody = document.getElementById('finance-table-body');
-    const elIncome = document.getElementById('fin-income');
-    const elExpense = document.getElementById('fin-expense');
-    const elBalance = document.getElementById('fin-balance');
+const renderDashboardStats = (productsSnap, financeSnap) => {
+    const elTotalProd = document.getElementById('stat-total-products');
+    const elAsset = document.getElementById('stat-asset-value');
+    const elMonthTrx = document.getElementById('stat-monthly-trx');
+    const recentTable = document.getElementById('dashboard-recent-trx');
+    const topList = document.getElementById('top-product-list');
 
-    if (!tableBody) return;
+    if (!elTotalProd) return;
 
-    tableBody.innerHTML = '';
-    let totalIn = 0;
-    let totalOut = 0;
+    let totalProd = 0;
+    let totalAsset = 0;
+    let expensiveProds = [];
 
-    if (snapshot.exists()) {
-        snapshot.forEach((child) => {
-            const data = child.val();
-            const key = child.key;
-            
-            if (data.type === 'in') totalIn += parseInt(data.amount);
-            else totalOut += parseInt(data.amount);
+    productsSnap.forEach(child => {
+        const d = child.val();
+        totalProd++;
+        totalAsset += parseInt(d.price);
+        expensiveProds.push({ name: `${d.brand} ${d.model}`, price: parseInt(d.price) });
+    });
 
-            const typeLabel = data.type === 'in' 
-                ? '<span class="spec-tag" style="color:var(--success); background:#DCFCE7;">Pemasukan</span>' 
-                : '<span class="spec-tag" style="color:var(--danger); background:#FEE2E2;">Pengeluaran</span>';
+    expensiveProds.sort((a,b) => b.price - a.price);
+    
+    elTotalProd.innerText = totalProd;
+    elAsset.innerText = formatRupiah(totalAsset);
 
-            tableBody.innerHTML += `
-                <tr>
-                    <td>${formatDate(data.date)}</td>
-                    <td><span style="font-weight:600">${data.category}</span></td>
-                    <td>${data.desc}</td>
-                    <td><span class="spec-tag">${data.method}</span></td>
-                    <td>${typeLabel}</td>
-                    <td style="font-weight:bold">${formatRupiah(data.amount)}</td>
-                    <td><button class="btn-danger" onclick="hapusData('finance', '${key}')">X</button></td>
-                </tr>
+    if (topList) {
+        topList.innerHTML = '';
+        expensiveProds.slice(0, 3).forEach(p => {
+            topList.innerHTML += `
+                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding-bottom:0.5rem;">
+                    <span style="font-weight:600; font-size:0.9rem">${p.name}</span>
+                    <span style="color:var(--primary); font-weight:700">${formatRupiah(p.price)}</span>
+                </div>
             `;
         });
     }
 
-    elIncome.innerText = formatRupiah(totalIn);
-    elExpense.innerText = formatRupiah(totalOut);
-    elBalance.innerText = formatRupiah(totalIn - totalOut);
-};
+    let thisMonthTrx = 0;
+    const currentMonth = new Date().getMonth();
+    const transactions = [];
 
-const renderEmployees = (snapshot) => {
-    const tableBody = document.getElementById('employee-table-body');
-    if (!tableBody) return;
+    financeSnap.forEach(child => {
+        const d = child.val();
+        const tDate = new Date(d.date);
+        if (tDate.getMonth() === currentMonth && d.type === 'in') {
+            thisMonthTrx++;
+        }
+        transactions.push(d);
+    });
 
-    tableBody.innerHTML = '';
-    if (snapshot.exists()) {
-        snapshot.forEach((child) => {
-            const data = child.val();
-            const key = child.key;
-            
-            tableBody.innerHTML += `
+    elMonthTrx.innerText = thisMonthTrx;
+
+    if (recentTable) {
+        recentTable.innerHTML = '';
+        transactions.reverse().slice(0, 5).forEach(t => {
+            recentTable.innerHTML += `
                 <tr>
-                    <td style="font-weight:600">${data.name}</td>
-                    <td>${data.role}</td>
-                    <td>${data.phone}</td>
-                    <td>${formatRupiah(data.salary)}</td>
-                    <td>
-                        <div style="display:flex; gap:0.5rem">
-                            <button class="btn btn-success btn-sm" onclick="prosesGaji('${data.name}', ${data.salary})">💸 Bayar</button>
-                            <button class="btn btn-danger btn-sm" onclick="hapusData('employees', '${key}')">Pecat</button>
-                        </div>
+                    <td>${formatDate(t.date)}</td>
+                    <td>${t.desc}</td>
+                    <td style="font-weight:bold; color:${t.type === 'in' ? 'var(--success)' : 'var(--danger)'}">
+                        ${t.type === 'in' ? '+' : '-'} ${formatRupiah(t.amount)}
                     </td>
                 </tr>
             `;
@@ -181,29 +232,102 @@ const renderEmployees = (snapshot) => {
     }
 };
 
-// LOGIKA UTAMA: Cek Halaman User atau Admin
-
-const catalogGrid = document.getElementById('catalog-grid');
-if (catalogGrid) {
-    onValue(productsRef, (snap) => {
-        renderProducts(snap, false);
+const renderAdminProducts = (snapshot) => {
+    const container = document.getElementById('admin-product-list');
+    if(!container) return;
+    container.innerHTML = '';
+    snapshot.forEach(child => {
+        container.innerHTML += createCardHTML(child.key, child.val(), true);
     });
+};
+
+const renderFinance = (snapshot) => {
+    const tableBody = document.getElementById('finance-table-body');
+    if (!tableBody) return;
+    tableBody.innerHTML = '';
+    
+    let totalIn = 0, totalOut = 0;
+    snapshot.forEach((child) => {
+        const data = child.val();
+        if (data.type === 'in') totalIn += parseInt(data.amount);
+        else totalOut += parseInt(data.amount);
+
+        tableBody.innerHTML += `
+            <tr>
+                <td>${formatDate(data.date)}</td>
+                <td>${data.category}</td>
+                <td>${data.desc}</td>
+                <td>${data.method}</td>
+                <td>${data.type === 'in' ? '<span class="text-green">Masuk</span>' : '<span class="text-red">Keluar</span>'}</td>
+                <td style="font-weight:bold">${formatRupiah(data.amount)}</td>
+                <td><button class="btn-danger" onclick="hapusData('finance', '${child.key}')">X</button></td>
+            </tr>
+        `;
+    });
+
+    const elInc = document.getElementById('fin-income');
+    const elExp = document.getElementById('fin-expense');
+    const elBal = document.getElementById('fin-balance');
+    
+    if(elInc) elInc.innerText = formatRupiah(totalIn);
+    if(elExp) elExp.innerText = formatRupiah(totalOut);
+    if(elBal) elBal.innerText = formatRupiah(totalIn - totalOut);
+};
+
+const renderEmployees = (snapshot) => {
+    const table = document.getElementById('employee-table-body');
+    if(!table) return;
+    table.innerHTML = '';
+    snapshot.forEach(child => {
+        const d = child.val();
+        table.innerHTML += `
+            <tr>
+                <td style="font-weight:600">${d.name}</td>
+                <td>${d.role}</td>
+                <td>${d.phone}</td>
+                <td>${formatRupiah(d.salary)}</td>
+                <td>
+                    <button class="btn btn-success btn-sm" onclick="prosesGaji('${d.name}', ${d.salary})">Bayar</button>
+                    <button class="btn btn-danger btn-sm" onclick="hapusData('employees', '${child.key}')">X</button>
+                </td>
+            </tr>
+        `;
+    });
+};
+
+if (document.getElementById('full-catalog-grid')) {
+    onValue(productsRef, (snap) => {
+        allProducts = [];
+        snap.forEach(child => {
+            allProducts.push({ key: child.key, data: child.val() });
+        });
+        filterProducts(); 
+    });
+    setupFilters();
+}
+
+if (document.getElementById('recommendation-grid')) {
+    onValue(productsRef, renderRecommendations);
 }
 
 const dashboard = document.getElementById('dashboard-container');
 if (dashboard) {
     onAuthStateChanged(auth, (user) => {
         const loginOverlay = document.getElementById('login-overlay');
-        
         if (user) {
-            if (loginOverlay) loginOverlay.classList.add('hidden');
+            loginOverlay.classList.add('hidden');
             dashboard.classList.remove('hidden');
             
-            onValue(productsRef, (snap) => renderProducts(snap, true));
-            onValue(financeRef, renderFinance);
+            onValue(productsRef, (snap) => {
+                renderAdminProducts(snap);
+                onValue(financeRef, (finSnap) => {
+                    renderDashboardStats(snap, finSnap);
+                    renderFinance(finSnap);
+                });
+            });
             onValue(employeesRef, renderEmployees);
         } else {
-            if (loginOverlay) loginOverlay.classList.remove('hidden');
+            loginOverlay.classList.remove('hidden');
             dashboard.classList.add('hidden');
         }
     });
@@ -216,8 +340,8 @@ if (loginForm) {
         signInWithEmailAndPassword(auth, 
             document.getElementById('admin-email').value, 
             document.getElementById('admin-pass').value
-        ).catch((error) => {
-            document.getElementById('login-error').innerText = "Login Gagal! Cek email/password.";
+        ).catch(() => {
+            document.getElementById('login-error').innerText = "Login Gagal!";
         });
     });
 }
@@ -225,7 +349,7 @@ if (loginForm) {
 const logoutBtn = document.getElementById('logout-btn');
 if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
-        if(confirm("Keluar dari Admin?")) signOut(auth);
+        if(confirm("Keluar dari sistem?")) signOut(auth);
     });
 }
 
@@ -245,7 +369,7 @@ if (productForm) {
             linkTokopedia: document.getElementById('prod-tokopedia').value,
             linkShopee: document.getElementById('prod-shopee').value,
             isRecommended: document.getElementById('prod-isRec').value
-        }).then(() => { alert("Produk Disimpan!"); productForm.reset(); });
+        }).then(() => { alert("Produk Tersimpan!"); productForm.reset(); });
     });
 }
 
@@ -255,12 +379,12 @@ if (financeForm) {
         e.preventDefault();
         push(financeRef, {
             category: document.getElementById('fin-category').value,
-            method: document.getElementById('fin-method').value,
+            method: "Manual",
             type: document.getElementById('fin-type').value,
             amount: document.getElementById('fin-amount').value,
             desc: document.getElementById('fin-desc').value,
             date: new Date().toISOString()
-        }).then(() => { alert("Transaksi Dicatat!"); financeForm.reset(); });
+        }).then(() => { alert("Transaksi Tersimpan!"); financeForm.reset(); });
     });
 }
 
@@ -273,65 +397,44 @@ if (empForm) {
             role: document.getElementById('emp-role').value,
             phone: document.getElementById('emp-phone').value,
             salary: document.getElementById('emp-salary').value
-        }).then(() => { alert("Karyawan Ditambahkan!"); empForm.reset(); });
-    });
-}
-
-const filterSelect = document.getElementById('brand-filter');
-if (filterSelect) {
-    filterSelect.addEventListener('change', (e) => {
-        const filter = e.target.value;
-        const cards = document.querySelectorAll('#catalog-grid .card');
-        
-        cards.forEach(card => {
-            if (filter === 'all' || card.dataset.brand === filter) {
-                card.style.display = 'block';
-            } else {
-                card.style.display = 'none';
-            }
-        });
+        }).then(() => { alert("Karyawan Tersimpan!"); empForm.reset(); });
     });
 }
 
 window.hapusData = (node, key) => {
-    if (confirm("Hapus data ini permanen?")) {
-        remove(ref(db, `${node}/${key}`)).catch(err => alert("Gagal hapus: " + err.message));
+    if (confirm("Hapus data ini?")) {
+        remove(ref(db, `${node}/${key}`));
     }
 };
 
 window.prosesJual = (key, name, price) => {
-    if(confirm(`Konfirmasi Penjualan: ${name} seharga ${formatRupiah(price)}?\n\nOtomatis masuk ke Pemasukan & Hapus dari stok.`)) {
+    if(confirm(`Konfirmasi terjual: ${name}?`)) {
         push(financeRef, {
             category: "Penjualan Unit",
-            method: "Cash / Tunai", 
+            method: "Cash",
             type: "in",
             amount: price,
-            desc: `SOLD OUT: ${name}`,
+            desc: `SOLD: ${name}`,
             date: new Date().toISOString()
         })
         .then(() => {
             remove(ref(db, `products/${key}`));
-            alert("Berhasil! Uang masuk & Stok berkurang.");
-            window.switchTab('finance-view');
-        })
-        .catch(err => alert("Error: " + err.message));
+            alert("Terjual & Masuk Kas!");
+            window.switchTab('overview-view');
+        });
     }
 };
 
 window.prosesGaji = (name, salary) => {
-    if(confirm(`Bayar gaji untuk ${name} sebesar ${formatRupiah(salary)}?\n\nOtomatis masuk ke Pengeluaran.`)) {
+    if(confirm(`Bayar gaji ${name}?`)) {
         push(financeRef, {
             category: "Gaji Karyawan",
-            method: "Transfer BCA",
+            method: "Transfer",
             type: "out",
             amount: salary,
-            desc: `Gaji Bulanan: ${name}`,
+            desc: `Gaji: ${name}`,
             date: new Date().toISOString()
-        })
-        .then(() => {
-            alert("Gaji berhasil dicatat di pengeluaran!");
-            window.switchTab('finance-view');
-        });
+        }).then(() => alert("Gaji Dibayar!"));
     }
 };
 
@@ -342,19 +445,15 @@ window.switchTab = (tabId) => {
     });
     document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
 
-    const targetSection = document.getElementById(tabId);
-    if (targetSection) {
-        targetSection.classList.add('active');
-        targetSection.style.display = 'block';
+    const target = document.getElementById(tabId);
+    if (target) {
+        target.classList.add('active');
+        target.style.display = 'block';
     }
-
-    if (window.event && window.event.target) {
-        const clickedBtn = window.event.target.closest('.nav-item');
-        if (clickedBtn) clickedBtn.classList.add('active');
-    }
-
+    
+    if (event.currentTarget) event.currentTarget.classList.add('active');
+    
     if (window.innerWidth < 1024) {
-        const sidebar = document.querySelector('.sidebar');
-        if (sidebar) sidebar.classList.remove('open');
+        document.querySelector('.sidebar').classList.remove('open');
     }
 };
