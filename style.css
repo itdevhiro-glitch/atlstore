@@ -17,13 +17,11 @@
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
 body { background-color: var(--white); color: var(--dark); line-height: 1.6; }
 
-/* --- UTILITIES --- */
 .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 .section { padding: 5rem 0; }
 .bg-soft { background-color: var(--light); }
 .bg-white { background-color: var(--white); }
 
-/* --- NAVBAR --- */
 .navbar {
     position: sticky; top: 0; z-index: 100;
     padding: 1.25rem 0; background: rgba(255, 255, 255, 0.95);
@@ -41,7 +39,6 @@ body { background-color: var(--white); color: var(--dark); line-height: 1.6; }
 }
 .btn-nav:hover { background: var(--primary); color: white !important; }
 
-/* --- HERO --- */
 .hero { position: relative; padding: 8rem 0 6rem; text-align: center; overflow: hidden; }
 .hero-bg {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -59,7 +56,6 @@ body { background-color: var(--white); color: var(--dark); line-height: 1.6; }
 .hero p { color: var(--secondary); font-size: 1.25rem; margin-bottom: 2.5rem; max-width: 600px; margin-left: auto; margin-right: auto; }
 .hero-buttons { display: flex; gap: 1rem; justify-content: center; }
 
-/* --- BUTTONS --- */
 .btn {
     display: inline-flex; align-items: center; justify-content: center;
     padding: 0.875rem 1.75rem; border-radius: 10px; font-weight: 600;
@@ -73,7 +69,6 @@ body { background-color: var(--white); color: var(--dark); line-height: 1.6; }
 .btn-disabled { background: #E2E8F0 !important; color: #94A3B8 !important; cursor: not-allowed; box-shadow: none; pointer-events: none; }
 .btn-danger { background: #EF4444; color: white; width: 100%; margin-top: 1rem; }
 
-/* --- CARDS & GRID --- */
 .section-header { text-align: center; margin-bottom: 3.5rem; }
 .section-title { font-size: 2.25rem; font-weight: 700; color: var(--dark); margin-bottom: 0.5rem; }
 .section-subtitle { color: var(--secondary); font-size: 1.1rem; }
@@ -100,7 +95,6 @@ body { background-color: var(--white); color: var(--dark); line-height: 1.6; }
 
 .action-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
 
-/* --- FOOTER --- */
 .footer-pro { background: var(--dark); color: #94A3B8; padding: 5rem 0 2rem; margin-top: auto; }
 .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 4rem; margin-bottom: 4rem; }
 .footer-brand p { margin: 1.5rem 0; line-height: 1.8; }
@@ -114,7 +108,6 @@ body { background-color: var(--white); color: var(--dark); line-height: 1.6; }
 .social-card:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
 .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2rem; text-align: center; font-size: 0.9rem; }
 
-/* --- ADMIN --- */
 .admin-layout { display: flex; min-height: 100vh; }
 .sidebar { width: 280px; background: white; border-right: 1px solid #E2E8F0; padding: 2rem; display: flex; flex-direction: column; position: fixed; height: 100vh; }
 .sidebar-nav { margin-top: 3rem; flex: 1; }
