@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atlantis Admin</title>
+    <title>Atlantis Admin HQ</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -35,7 +35,7 @@
         </div>
 
         <aside class="sidebar">
-            <div class="logo" style="margin-bottom: 3rem;">Atlantis<span>Admin</span></div>
+            <div class="logo" style="margin-bottom: 3rem;">Atlantis<span>HQ</span></div>
             <nav style="flex: 1;">
                 <button class="nav-item active" onclick="switchTab('products-view')">📦 Manajemen Produk</button>
                 <button class="nav-item" onclick="switchTab('finance-view')">💰 Keuangan & Cashflow</button>
@@ -140,7 +140,7 @@
                     </form>
                 </div>
 
-                <h3 style="margin-bottom: 1rem;">Daftar Stok</h3>
+                <h3 style="margin-bottom: 1rem;">Daftar Stok (Klik "Terjual" untuk Masuk Keuangan)</h3>
                 <div id="admin-product-list" class="grid"></div>
             </section>
 
@@ -163,18 +163,18 @@
                 </div>
 
                 <div class="form-card">
-                    <h3 style="margin-bottom: 1.5rem;">Input Transaksi Detail</h3>
+                    <h3 style="margin-bottom: 1.5rem;">Input Transaksi Manual</h3>
                     <form id="finance-form">
                         <div class="form-row">
                             <div class="form-group">
                                 <label>Kategori Transaksi</label>
                                 <select id="fin-category" class="form-select">
-                                    <option value="Penjualan Unit">Penjualan Unit</option>
                                     <option value="Jasa Service">Jasa Service</option>
                                     <option value="Belanja Stok">Belanja Stok</option>
-                                    <option value="Gaji Karyawan">Gaji Karyawan</option>
                                     <option value="Operasional">Operasional (Listrik/Air/Net)</option>
                                     <option value="Marketing">Marketing (Ads)</option>
+                                    <option value="Penjualan Unit">Penjualan Unit (Manual)</option>
+                                    <option value="Gaji Karyawan">Gaji Karyawan (Manual)</option>
                                     <option value="Lainnya">Lainnya</option>
                                 </select>
                             </div>
@@ -203,7 +203,7 @@
                         </div>
                         <div class="form-group" style="margin-bottom: 1.5rem;">
                             <label>Keterangan Detail</label>
-                            <input type="text" id="fin-desc" class="form-input" placeholder="Contoh: Unit ROG S/N 12345 terjual ke Pak Budi" required>
+                            <input type="text" id="fin-desc" class="form-input" placeholder="Keterangan transaksi..." required>
                         </div>
                         <button type="submit" class="btn btn-primary">Simpan Transaksi</button>
                     </form>
@@ -279,4 +279,3 @@
     <script type="module" src="main.js"></script>
 </body>
 </html>
-
