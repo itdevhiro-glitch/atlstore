@@ -34,13 +34,25 @@ const createCardHTML = (key, data, isAdmin) => {
     let btns = '';
     
     if (isAdmin) {
-        btns = `<button class="btn btn-danger" style="width:100%" onclick="hapusData('products', '${key}')">Hapus Unit</button>`;
+        // --- FITUR INTEGRASI: TOMBOL JUAL OTOMATIS ---
+        btns = `
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem">
+                <button class="btn btn-success btn-sm" onclick="prosesJual('${key}', '${data.brand} ${data.model}', ${data.price})">✅ Terjual</button>
+                <button class="btn btn-danger btn-sm" onclick="hapusData('products', '${key}')">Hapus</button>
+            </div>
+        `;
     } else {
         const linkTokped = data.linkTokopedia || '#';
         const linkShopee = data.linkShopee || '#';
+        
+        let btnTokped = linkTokped !== '#' ? `<a href="${linkTokped}" target="_blank" class="btn btn-tokopedia btn-sm" style="text-align:center; display:block">Tokopedia</a>` : `<button class="btn btn-disabled btn-sm" style="background:#ddd; color:#999; width:100%">Tokopedia</button>`;
+        let btnShopee = linkShopee !== '#' ? `<a href="${linkShopee}" target="_blank" class="btn btn-shopee btn-sm" style="text-align:center; display:block">Shopee</a>` : `<button class="btn btn-disabled btn-sm" style="background:#ddd; color:#999; width:100%">Shopee</button>`;
+
         btns = `
-            <a href="${linkTokped}" target="_blank" class="btn btn-tokopedia btn-sm" style="text-align:center; display:block">Tokopedia</a>
-            <a href="${linkShopee}" target="_blank" class="btn btn-shopee btn-sm" style="text-align:center; display:block">Shopee</a>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem">
+                ${btnTokped}
+                ${btnShopee}
+            </div>
         `;
     }
 
@@ -56,7 +68,7 @@ const createCardHTML = (key, data, isAdmin) => {
                     <span class="spec-tag">💾 ${data.ram} / ${data.ssd}</span>
                 </div>
                 <div class="card-price">${formatRupiah(data.price)}</div>
-                <div style="margin-top:0.5rem; display:grid; grid-template-columns:1fr 1fr; gap:0.5rem">${btns}</div>
+                <div style="margin-top:0.5rem">${btns}</div>
             </div>
         </div>
     `;
@@ -142,13 +154,19 @@ const renderEmployees = (snapshot) => {
             const data = child.val();
             const key = child.key;
             
+            // --- FITUR INTEGRASI: TOMBOL BAYAR GAJI OTOMATIS ---
             tableBody.innerHTML += `
                 <tr>
                     <td style="font-weight:600">${data.name}</td>
                     <td>${data.role}</td>
                     <td>${data.phone}</td>
                     <td>${formatRupiah(data.salary)}</td>
-                    <td><button class="btn-danger" onclick="hapusData('employees', '${key}')">Pecat</button></td>
+                    <td>
+                        <div style="display:flex; gap:0.5rem">
+                            <button class="btn btn-success btn-sm" onclick="prosesGaji('${data.name}', ${data.salary})">💸 Bayar</button>
+                            <button class="btn btn-danger btn-sm" onclick="hapusData('employees', '${key}')">Pecat</button>
+                        </div>
+                    </td>
                 </tr>
             `;
         });
@@ -249,8 +267,74 @@ if (filterSelect) {
     });
 }
 
+// --- GLOBAL FUNCTIONS & INTEGRATION LOGIC ---
+
 window.hapusData = (node, key) => {
     if (confirm("Hapus data ini permanen?")) {
         remove(ref(db, `${node}/${key}`)).catch(err => alert("Gagal hapus"));
+    }
+};
+
+// 1. INTEGRASI PRODUK -> KEUANGAN
+window.prosesJual = (key, name, price) => {
+    if(confirm(`Konfirmasi Penjualan: ${name} seharga ${formatRupiah(price)}?\n\nOtomatis masuk ke Pemasukan & Hapus dari stok.`)) {
+        // Step 1: Catat Keuangan
+        push(financeRef, {
+            category: "Penjualan Unit",
+            method: "Cash / Tunai", // Default, bisa diubah manual nanti kalau perlu
+            type: "in",
+            amount: price,
+            desc: `SOLD OUT: ${name}`,
+            date: new Date().toISOString()
+        })
+        .then(() => {
+            // Step 2: Hapus Stok
+            remove(ref(db, `products/${key}`));
+            alert("Berhasil! Uang masuk & Stok berkurang.");
+            window.switchTab('finance-view'); // Pindah tab agar admin lihat uangnya
+        })
+        .catch(err => alert("Error: " + err.message));
+    }
+};
+
+// 2. INTEGRASI KARYAWAN -> KEUANGAN
+window.prosesGaji = (name, salary) => {
+    if(confirm(`Bayar gaji untuk ${name} sebesar ${formatRupiah(salary)}?\n\nOtomatis masuk ke Pengeluaran.`)) {
+        push(financeRef, {
+            category: "Gaji Karyawan",
+            method: "Transfer BCA", // Default
+            type: "out",
+            amount: salary,
+            desc: `Gaji Bulanan: ${name}`,
+            date: new Date().toISOString()
+        })
+        .then(() => {
+            alert("Gaji berhasil dicatat di pengeluaran!");
+            window.switchTab('finance-view');
+        });
+    }
+};
+
+window.switchTab = (tabId) => {
+    document.querySelectorAll('.view-section').forEach(el => {
+        el.classList.remove('active');
+        el.style.display = 'none'; 
+    });
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+    const targetSection = document.getElementById(tabId);
+    if (targetSection) {
+        targetSection.classList.add('active');
+        targetSection.style.display = 'block';
+    }
+
+    if (window.event && window.event.target) {
+        const clickedBtn = window.event.target.closest('.nav-item');
+        if (clickedBtn) clickedBtn.classList.add('active');
+    }
+
+    if (window.innerWidth < 1024) {
+        const sidebar = document.querySelector('.sidebar');
+        if (sidebar) sidebar.classList.remove('open');
     }
 };
