@@ -33,6 +33,7 @@ const formatDate = (dateString) => {
 const createCardHTML = (key, data, isAdmin) => {
     let btns = '';
     
+    // Logic tampilan tombol: Hanya tampil tombol admin jika mode Admin AKTIF
     if (isAdmin) {
         btns = `
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem">
@@ -89,9 +90,12 @@ const renderProducts = (snapshot, isAdmin = false) => {
         const key = child.key;
         const html = createCardHTML(key, data, isAdmin);
 
+        // Jika mode Admin, masukkan ke container Admin
         if (isAdmin && adminContainer) {
             adminContainer.innerHTML += html;
-        } else if (!isAdmin) {
+        } 
+        // Jika mode User (atau Admin buka index.html), masukkan ke container User
+        else if (!isAdmin) {
             if (catContainer) catContainer.innerHTML += html;
             if (recContainer && data.isRecommended === 'true') {
                 recContainer.innerHTML += html;
@@ -171,11 +175,16 @@ const renderEmployees = (snapshot) => {
     }
 };
 
+// --- FIX LOGIKA LOGIN: CEK HALAMAN MANA KITA BERADA ---
 onAuthStateChanged(auth, (user) => {
     const loginOverlay = document.getElementById('login-overlay');
     const dashboard = document.getElementById('dashboard-container');
+    
+    // Cek apakah kita di halaman admin (admin.html punya elemen dashboard-container)
+    const isAdminPage = !!dashboard; 
 
-    if (user) {
+    if (user && isAdminPage) {
+        // LOGIN & DI HALAMAN ADMIN -> TAMPIL DASHBOARD
         if (loginOverlay) loginOverlay.classList.add('hidden');
         if (dashboard) dashboard.classList.remove('hidden');
         
@@ -183,8 +192,11 @@ onAuthStateChanged(auth, (user) => {
         onValue(financeRef, renderFinance);
         onValue(employeesRef, renderEmployees);
     } else {
+        // TIDAK LOGIN ATAU DI HALAMAN USER (index.html) -> TAMPIL CATALOG
         if (loginOverlay) loginOverlay.classList.remove('hidden');
         if (dashboard) dashboard.classList.add('hidden');
+        
+        // PENTING: isAdmin diset FALSE agar dirender ke catalog-grid
         onValue(productsRef, (snap) => renderProducts(snap, false));
     }
 });
