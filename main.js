@@ -2,7 +2,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-// KONFIGURASI FIREBASE ANDA
 const firebaseConfig = {
     apiKey: "AIzaSyBMA1rA90qC8KLE7spe83rHCKCUXqEqlYU",
     authDomain: "atlantis-store-b1952.firebaseapp.com",
@@ -14,29 +13,27 @@ const firebaseConfig = {
     measurementId: "G-K7EP7DKDYG"
 };
 
-// INITIALIZE
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
-const productsRef = ref(db, 'products');
 
-// FORMATTER RUPIAH
+const productsRef = ref(db, 'products');
+const financeRef = ref(db, 'finance');
+const employeesRef = ref(db, 'employees');
+
 const formatRupiah = (num) => {
     return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num);
 };
 
-// PEMBUAT KARTU HTML (Card Generator)
+const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+    return new Date(dateString).toLocaleDateString('id-ID', options);
+};
+
 const createCardHTML = (key, data, isAdmin) => {
-    let actionButtons = '';
-    
-    if (isAdmin) {
-        actionButtons = `<button class="btn-danger" onclick="hapusProduk('${key}')">Hapus</button>`;
-    } else {
-        actionButtons = `
-            <a href="#" class="btn btn-disabled btn-sm" style="text-align:center">Tokopedia</a>
-            <a href="#" class="btn btn-disabled btn-sm" style="text-align:center">Shopee</a>
-        `;
-    }
+    let btns = isAdmin 
+        ? `<button class="btn btn-danger" style="width:100%" onclick="hapusData('products', '${key}')">Hapus Unit</button>`
+        : `<a href="#" class="btn btn-outline btn-sm" style="text-align:center; display:block">Tokopedia</a><a href="#" class="btn btn-outline btn-sm" style="text-align:center; display:block">Shopee</a>`;
 
     return `
         <div class="card" data-brand="${data.brand}">
@@ -45,23 +42,18 @@ const createCardHTML = (key, data, isAdmin) => {
                 <span class="card-brand">${data.brand}</span>
                 <h3 class="card-title">${data.model}</h3>
                 <div class="card-specs">
-                    <div>🧠 ${data.cpu}</div>
-                    <div>🎮 ${data.gpu}</div>
-                    <div style="margin-top:0.5rem">
-                        <span class="tag">${data.ram}</span>
-                        <span class="tag">${data.ssd}</span>
-                    </div>
+                    <span class="spec-tag">🧠 ${data.cpu}</span>
+                    <span class="spec-tag">🎮 ${data.gpu}</span>
+                    <span class="spec-tag">💾 ${data.ram} / ${data.ssd}</span>
                 </div>
                 <div class="card-price">${formatRupiah(data.price)}</div>
-                <div class="card-actions">${actionButtons}</div>
+                <div style="margin-top:0.5rem; display:grid; grid-template-columns:1fr 1fr; gap:0.5rem">${btns}</div>
             </div>
         </div>
     `;
 };
 
-// RENDER KE LAYAR
-const renderData = (snapshot, isAdmin = false) => {
-    // Tentukan target elemen berdasarkan halaman (Admin / User)
+const renderProducts = (snapshot, isAdmin = false) => {
     const recContainer = document.getElementById('recommendation-grid');
     const catContainer = document.getElementById('catalog-grid');
     const adminContainer = document.getElementById('admin-product-list');
@@ -75,65 +67,112 @@ const renderData = (snapshot, isAdmin = false) => {
     snapshot.forEach((child) => {
         const data = child.val();
         const key = child.key;
-        const cardHTML = createCardHTML(key, data, isAdmin);
+        const html = createCardHTML(key, data, isAdmin);
 
-        // Jika di halaman Admin
         if (isAdmin && adminContainer) {
-            adminContainer.innerHTML += cardHTML;
-        } 
-        // Jika di halaman User
-        else if (!isAdmin) {
-            if (catContainer) catContainer.innerHTML += cardHTML;
+            adminContainer.innerHTML += html;
+        } else if (!isAdmin) {
+            if (catContainer) catContainer.innerHTML += html;
             if (recContainer && data.isRecommended === 'true') {
-                recContainer.innerHTML += cardHTML;
+                recContainer.innerHTML += html;
             }
         }
     });
 };
 
-// LISTENER DATABASE
+const renderFinance = (snapshot) => {
+    const tableBody = document.getElementById('finance-table-body');
+    const elIncome = document.getElementById('fin-income');
+    const elExpense = document.getElementById('fin-expense');
+    const elBalance = document.getElementById('fin-balance');
+
+    if (!tableBody) return;
+
+    tableBody.innerHTML = '';
+    let totalIn = 0;
+    let totalOut = 0;
+
+    if (snapshot.exists()) {
+        snapshot.forEach((child) => {
+            const data = child.val();
+            const key = child.key;
+            
+            if (data.type === 'in') totalIn += parseInt(data.amount);
+            else totalOut += parseInt(data.amount);
+
+            const typeLabel = data.type === 'in' 
+                ? '<span class="spec-tag" style="color:var(--success); background:#DCFCE7;">Pemasukan</span>' 
+                : '<span class="spec-tag" style="color:var(--danger); background:#FEE2E2;">Pengeluaran</span>';
+
+            tableBody.innerHTML += `
+                <tr>
+                    <td>${formatDate(data.date)}</td>
+                    <td>${data.desc}</td>
+                    <td>${typeLabel}</td>
+                    <td style="font-weight:bold">${formatRupiah(data.amount)}</td>
+                    <td><button class="btn-danger" onclick="hapusData('finance', '${key}')">X</button></td>
+                </tr>
+            `;
+        });
+    }
+
+    elIncome.innerText = formatRupiah(totalIn);
+    elExpense.innerText = formatRupiah(totalOut);
+    elBalance.innerText = formatRupiah(totalIn - totalOut);
+};
+
+const renderEmployees = (snapshot) => {
+    const tableBody = document.getElementById('employee-table-body');
+    if (!tableBody) return;
+
+    tableBody.innerHTML = '';
+    if (snapshot.exists()) {
+        snapshot.forEach((child) => {
+            const data = child.val();
+            const key = child.key;
+            
+            tableBody.innerHTML += `
+                <tr>
+                    <td style="font-weight:600">${data.name}</td>
+                    <td>${data.role}</td>
+                    <td>${data.phone}</td>
+                    <td>${formatRupiah(data.salary)}</td>
+                    <td><button class="btn-danger" onclick="hapusData('employees', '${key}')">Pecat</button></td>
+                </tr>
+            `;
+        });
+    }
+};
+
 onAuthStateChanged(auth, (user) => {
-    // Cek kita ada di halaman mana
     const loginOverlay = document.getElementById('login-overlay');
     const dashboard = document.getElementById('dashboard-container');
 
     if (user) {
-        // User Login (Admin Mode)
         if (loginOverlay) loginOverlay.classList.add('hidden');
         if (dashboard) dashboard.classList.remove('hidden');
         
-        // Ambil data untuk Admin
-        onValue(productsRef, (snapshot) => renderData(snapshot, true));
+        onValue(productsRef, (snap) => renderProducts(snap, true));
+        onValue(financeRef, renderFinance);
+        onValue(employeesRef, renderEmployees);
     } else {
-        // User Logout / Public Mode
         if (loginOverlay) loginOverlay.classList.remove('hidden');
         if (dashboard) dashboard.classList.add('hidden');
-
-        // Ambil data untuk Public (Halaman Index)
-        onValue(productsRef, (snapshot) => renderData(snapshot, false));
+        onValue(productsRef, (snap) => renderProducts(snap, false));
     }
 });
 
-// LOGIN FUNCTION
 const loginForm = document.getElementById('login-form');
 if (loginForm) {
     loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        const email = document.getElementById('admin-email').value;
-        const pass = document.getElementById('admin-pass').value;
-        const errTxt = document.getElementById('login-error');
-
-        signInWithEmailAndPassword(auth, email, pass)
-            .then(() => {
-                errTxt.innerText = "";
-            })
-            .catch((error) => {
-                errTxt.innerText = "Login Gagal: Periksa Email/Password.";
-            });
+        signInWithEmailAndPassword(auth, 
+            document.getElementById('admin-email').value, 
+            document.getElementById('admin-pass').value
+        ).catch(() => document.getElementById('login-error').innerText = "Login Gagal.");
     });
 }
 
-// LOGOUT FUNCTION
 const logoutBtn = document.getElementById('logout-btn');
 if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
@@ -141,54 +180,62 @@ if (logoutBtn) {
     });
 }
 
-// INPUT DATA FUNCTION
 const productForm = document.getElementById('product-form');
 if (productForm) {
     productForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        
-        const newProduct = {
-            brand: document.getElementById('brand').value,
-            model: document.getElementById('model').value,
-            cpu: document.getElementById('cpu').value,
-            gpu: document.getElementById('gpu').value,
-            ram: document.getElementById('ram').value,
-            ssd: document.getElementById('ssd').value,
-            price: document.getElementById('price').value,
-            image: document.getElementById('image').value,
-            isRecommended: document.getElementById('isRecommended').value
-        };
-
-        push(productsRef, newProduct)
-            .then(() => {
-                alert("Data berhasil disimpan!");
-                productForm.reset();
-            })
-            .catch((err) => alert("Gagal menyimpan: " + err.message));
+        push(productsRef, {
+            brand: document.getElementById('prod-brand').value,
+            model: document.getElementById('prod-model').value,
+            cpu: document.getElementById('prod-cpu').value,
+            gpu: document.getElementById('prod-gpu').value,
+            ram: document.getElementById('prod-ram').value,
+            ssd: document.getElementById('prod-ssd').value,
+            price: document.getElementById('prod-price').value,
+            image: document.getElementById('prod-image').value,
+            isRecommended: document.getElementById('prod-isRec').value
+        }).then(() => { alert("Produk Disimpan!"); productForm.reset(); });
     });
 }
 
-// FILTER FUNCTION
+const financeForm = document.getElementById('finance-form');
+if (financeForm) {
+    financeForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        push(financeRef, {
+            type: document.getElementById('fin-type').value,
+            amount: document.getElementById('fin-amount').value,
+            desc: document.getElementById('fin-desc').value,
+            date: new Date().toISOString()
+        }).then(() => { alert("Transaksi Dicatat!"); financeForm.reset(); });
+    });
+}
+
+const empForm = document.getElementById('employee-form');
+if (empForm) {
+    empForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        push(employeesRef, {
+            name: document.getElementById('emp-name').value,
+            role: document.getElementById('emp-role').value,
+            phone: document.getElementById('emp-phone').value,
+            salary: document.getElementById('emp-salary').value
+        }).then(() => { alert("Karyawan Ditambahkan!"); empForm.reset(); });
+    });
+}
+
 const filterSelect = document.getElementById('brand-filter');
 if (filterSelect) {
     filterSelect.addEventListener('change', (e) => {
         const filter = e.target.value;
-        const cards = document.querySelectorAll('#catalog-grid .card');
-        
-        cards.forEach(card => {
-            if (filter === 'all' || card.dataset.brand === filter) {
-                card.style.display = 'flex';
-            } else {
-                card.style.display = 'none';
-            }
+        document.querySelectorAll('#catalog-grid .card').forEach(card => {
+            card.style.display = (filter === 'all' || card.dataset.brand === filter) ? 'flex' : 'none';
         });
     });
 }
 
-// HAPUS DATA FUNCTION (Global Scope)
-window.hapusProduk = (key) => {
-    if (confirm("Hapus produk ini permanen?")) {
-        remove(ref(db, `products/${key}`))
-            .catch(err => alert("Gagal menghapus (Akses Ditolak)"));
+window.hapusData = (node, key) => {
+    if (confirm("Hapus data ini permanen?")) {
+        remove(ref(db, `${node}/${key}`)).catch(err => alert("Gagal hapus"));
     }
 };
