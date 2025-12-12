@@ -78,12 +78,18 @@ const renderProducts = (snapshot, isAdmin = false) => {
     const catContainer = document.getElementById('catalog-grid');
     const adminContainer = document.getElementById('admin-product-list');
 
-    if (recContainer) recContainer.innerHTML = '';
-    if (catContainer) catContainer.innerHTML = '';
-    if (adminContainer) adminContainer.innerHTML = '';
+    if (isAdmin) {
+        if (adminContainer) adminContainer.innerHTML = '';
+    } else {
+        if (recContainer) recContainer.innerHTML = '';
+        if (catContainer) catContainer.innerHTML = '';
+    }
 
     if (!snapshot.exists()) {
-        if (catContainer) catContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 2rem;">Belum ada data produk.</p>';
+        const emptyMsg = '<p style="grid-column: 1/-1; text-align: center; padding: 2rem; color: #64748B;">Belum ada data produk tersedia.</p>';
+        if (isAdmin && adminContainer) adminContainer.innerHTML = emptyMsg;
+        if (!isAdmin && catContainer) catContainer.innerHTML = emptyMsg;
+        if (!isAdmin && recContainer) recContainer.innerHTML = '';
         return;
     }
 
@@ -174,6 +180,8 @@ const renderEmployees = (snapshot) => {
         });
     }
 };
+
+// LOGIKA UTAMA: Cek Halaman User atau Admin
 
 const catalogGrid = document.getElementById('catalog-grid');
 if (catalogGrid) {
