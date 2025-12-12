@@ -26,14 +26,23 @@ const formatRupiah = (num) => {
 };
 
 const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+    const options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' };
     return new Date(dateString).toLocaleDateString('id-ID', options);
 };
 
 const createCardHTML = (key, data, isAdmin) => {
-    let btns = isAdmin 
-        ? `<button class="btn btn-danger" style="width:100%" onclick="hapusData('products', '${key}')">Hapus Unit</button>`
-        : `<a href="#" class="btn btn-outline btn-sm" style="text-align:center; display:block">Tokopedia</a><a href="#" class="btn btn-outline btn-sm" style="text-align:center; display:block">Shopee</a>`;
+    let btns = '';
+    
+    if (isAdmin) {
+        btns = `<button class="btn btn-danger" style="width:100%" onclick="hapusData('products', '${key}')">Hapus Unit</button>`;
+    } else {
+        const linkTokped = data.linkTokopedia || '#';
+        const linkShopee = data.linkShopee || '#';
+        btns = `
+            <a href="${linkTokped}" target="_blank" class="btn btn-tokopedia btn-sm" style="text-align:center; display:block">Tokopedia</a>
+            <a href="${linkShopee}" target="_blank" class="btn btn-shopee btn-sm" style="text-align:center; display:block">Shopee</a>
+        `;
+    }
 
     return `
         <div class="card" data-brand="${data.brand}">
@@ -107,7 +116,9 @@ const renderFinance = (snapshot) => {
             tableBody.innerHTML += `
                 <tr>
                     <td>${formatDate(data.date)}</td>
+                    <td><span style="font-weight:600">${data.category}</span></td>
                     <td>${data.desc}</td>
+                    <td><span class="spec-tag">${data.method}</span></td>
                     <td>${typeLabel}</td>
                     <td style="font-weight:bold">${formatRupiah(data.amount)}</td>
                     <td><button class="btn-danger" onclick="hapusData('finance', '${key}')">X</button></td>
@@ -193,6 +204,8 @@ if (productForm) {
             ssd: document.getElementById('prod-ssd').value,
             price: document.getElementById('prod-price').value,
             image: document.getElementById('prod-image').value,
+            linkTokopedia: document.getElementById('prod-tokopedia').value,
+            linkShopee: document.getElementById('prod-shopee').value,
             isRecommended: document.getElementById('prod-isRec').value
         }).then(() => { alert("Produk Disimpan!"); productForm.reset(); });
     });
@@ -203,6 +216,8 @@ if (financeForm) {
     financeForm.addEventListener('submit', (e) => {
         e.preventDefault();
         push(financeRef, {
+            category: document.getElementById('fin-category').value,
+            method: document.getElementById('fin-method').value,
             type: document.getElementById('fin-type').value,
             amount: document.getElementById('fin-amount').value,
             desc: document.getElementById('fin-desc').value,
