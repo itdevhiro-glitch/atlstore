@@ -2,6 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
+// KONFIGURASI FIREBASE ANDA
 const firebaseConfig = {
     apiKey: "AIzaSyBMA1rA90qC8KLE7spe83rHCKCUXqEqlYU",
     authDomain: "atlantis-store-b1952.firebaseapp.com",
@@ -13,129 +14,137 @@ const firebaseConfig = {
     measurementId: "G-K7EP7DKDYG"
 };
 
+// INITIALIZE
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 const productsRef = ref(db, 'products');
 
-const formatRupiah = (number) => {
-    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
+// FORMATTER RUPIAH
+const formatRupiah = (num) => {
+    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num);
 };
 
-const createCard = (key, data, isAdmin = false) => {
-    const ramTags = data.ram.split(',').map(r => `<span class="tag">RAM ${r.trim()}</span>`).join('');
-    const ssdTags = data.ssd.split(',').map(s => `<span class="tag">SSD ${s.trim()}</span>`).join('');
-
-    let actionHTML = '';
+// PEMBUAT KARTU HTML (Card Generator)
+const createCardHTML = (key, data, isAdmin) => {
+    let actionButtons = '';
+    
     if (isAdmin) {
-        actionHTML = `<button class="btn btn-danger btn-sm" onclick="deleteProduct('${key}')">Hapus Produk</button>`;
+        actionButtons = `<button class="btn-danger" onclick="hapusProduk('${key}')">Hapus</button>`;
     } else {
-        actionHTML = `
-            <div class="action-buttons">
-                <a href="#" class="btn btn-sm btn-disabled">Tokopedia</a>
-                <a href="#" class="btn btn-sm btn-disabled">Shopee</a>
-            </div>
+        actionButtons = `
+            <a href="#" class="btn btn-disabled btn-sm" style="text-align:center">Tokopedia</a>
+            <a href="#" class="btn btn-disabled btn-sm" style="text-align:center">Shopee</a>
         `;
     }
 
     return `
-        <div class="product-card" data-brand="${data.brand}">
-            <img src="${data.image}" alt="${data.model}" class="product-image" onerror="this.src='https://placehold.co/400x300?text=No+Image'">
-            <div class="product-info">
-                <span class="product-brand">${data.brand}</span>
-                <h3 class="product-title">${data.model}</h3>
-                <div class="product-specs">
-                    <span>⚡ ${data.cpu}</span>
-                    <span>🎮 ${data.gpu}</span>
+        <div class="card" data-brand="${data.brand}">
+            <img src="${data.image}" class="card-img" alt="${data.model}" onerror="this.src='https://placehold.co/400x300?text=No+Image'">
+            <div class="card-body">
+                <span class="card-brand">${data.brand}</span>
+                <h3 class="card-title">${data.model}</h3>
+                <div class="card-specs">
+                    <div>🧠 ${data.cpu}</div>
+                    <div>🎮 ${data.gpu}</div>
+                    <div style="margin-top:0.5rem">
+                        <span class="tag">${data.ram}</span>
+                        <span class="tag">${data.ssd}</span>
+                    </div>
                 </div>
-                <div class="tag-container">${ramTags}${ssdTags}</div>
-                <div class="product-price">${formatRupiah(data.price)}</div>
-                ${actionHTML}
+                <div class="card-price">${formatRupiah(data.price)}</div>
+                <div class="card-actions">${actionButtons}</div>
             </div>
         </div>
     `;
 };
 
-const renderUser = (snapshot) => {
-    const recGrid = document.getElementById('recommendation-grid');
-    const catGrid = document.getElementById('catalog-grid');
-    if(!recGrid || !catGrid) return;
+// RENDER KE LAYAR
+const renderData = (snapshot, isAdmin = false) => {
+    // Tentukan target elemen berdasarkan halaman (Admin / User)
+    const recContainer = document.getElementById('recommendation-grid');
+    const catContainer = document.getElementById('catalog-grid');
+    const adminContainer = document.getElementById('admin-product-list');
 
-    recGrid.innerHTML = ''; catGrid.innerHTML = '';
+    if (recContainer) recContainer.innerHTML = '';
+    if (catContainer) catContainer.innerHTML = '';
+    if (adminContainer) adminContainer.innerHTML = '';
 
-    snapshot.forEach((childSnapshot) => {
-        const data = childSnapshot.val();
-        const key = childSnapshot.key;
-        const card = createCard(key, data, false);
+    if (!snapshot.exists()) return;
 
-        if (data.isRecommended === 'true') recGrid.innerHTML += card;
-        catGrid.innerHTML += card;
+    snapshot.forEach((child) => {
+        const data = child.val();
+        const key = child.key;
+        const cardHTML = createCardHTML(key, data, isAdmin);
+
+        // Jika di halaman Admin
+        if (isAdmin && adminContainer) {
+            adminContainer.innerHTML += cardHTML;
+        } 
+        // Jika di halaman User
+        else if (!isAdmin) {
+            if (catContainer) catContainer.innerHTML += cardHTML;
+            if (recContainer && data.isRecommended === 'true') {
+                recContainer.innerHTML += cardHTML;
+            }
+        }
     });
 };
 
-const renderAdmin = (snapshot) => {
-    const listGrid = document.getElementById('admin-product-list');
-    if(!listGrid) return;
-    listGrid.innerHTML = '';
-    snapshot.forEach((childSnapshot) => {
-        const data = childSnapshot.val();
-        const key = childSnapshot.key;
-        listGrid.innerHTML += createCard(key, data, true);
-    });
-};
+// LISTENER DATABASE
+onAuthStateChanged(auth, (user) => {
+    // Cek kita ada di halaman mana
+    const loginOverlay = document.getElementById('login-overlay');
+    const dashboard = document.getElementById('dashboard-container');
 
+    if (user) {
+        // User Login (Admin Mode)
+        if (loginOverlay) loginOverlay.classList.add('hidden');
+        if (dashboard) dashboard.classList.remove('hidden');
+        
+        // Ambil data untuk Admin
+        onValue(productsRef, (snapshot) => renderData(snapshot, true));
+    } else {
+        // User Logout / Public Mode
+        if (loginOverlay) loginOverlay.classList.remove('hidden');
+        if (dashboard) dashboard.classList.add('hidden');
+
+        // Ambil data untuk Public (Halaman Index)
+        onValue(productsRef, (snapshot) => renderData(snapshot, false));
+    }
+});
+
+// LOGIN FUNCTION
 const loginForm = document.getElementById('login-form');
 if (loginForm) {
     loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const email = document.getElementById('admin-email').value;
         const pass = document.getElementById('admin-pass').value;
-        const errorMsg = document.getElementById('login-error');
-        const btn = e.target.querySelector('button');
-        
-        btn.innerText = "Verifying...";
-        btn.disabled = true;
+        const errTxt = document.getElementById('login-error');
 
         signInWithEmailAndPassword(auth, email, pass)
-            .then(() => { errorMsg.innerText = ""; })
-            .catch((error) => { 
-                errorMsg.innerText = "Akses Ditolak: Password Salah / User Tidak Dikenal";
-                btn.innerText = "Secure Login";
-                btn.disabled = false;
+            .then(() => {
+                errTxt.innerText = "";
+            })
+            .catch((error) => {
+                errTxt.innerText = "Login Gagal: Periksa Email/Password.";
             });
     });
 }
 
+// LOGOUT FUNCTION
 const logoutBtn = document.getElementById('logout-btn');
 if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
-        if(confirm("Logout dari sesi admin?")) {
-            signOut(auth).then(() => window.location.reload());
-        }
+        if(confirm("Keluar dari Admin?")) signOut(auth);
     });
 }
 
-onAuthStateChanged(auth, (user) => {
-    const loginOverlay = document.getElementById('login-overlay');
-    const dashboard = document.getElementById('dashboard-container');
-    
-    if (loginOverlay && dashboard) {
-        if (user) {
-            loginOverlay.classList.add('hidden');
-            dashboard.classList.remove('hidden');
-            onValue(productsRef, (snapshot) => renderAdmin(snapshot));
-        } else {
-            loginOverlay.classList.remove('hidden');
-            dashboard.classList.add('hidden');
-        }
-    } else {
-        onValue(productsRef, (snapshot) => renderUser(snapshot));
-    }
-});
-
-const form = document.getElementById('product-form');
-if (form) {
-    form.addEventListener('submit', (e) => {
+// INPUT DATA FUNCTION
+const productForm = document.getElementById('product-form');
+if (productForm) {
+    productForm.addEventListener('submit', (e) => {
         e.preventDefault();
         
         const newProduct = {
@@ -146,27 +155,28 @@ if (form) {
             ram: document.getElementById('ram').value,
             ssd: document.getElementById('ssd').value,
             price: document.getElementById('price').value,
-            image: document.getElementById('image').value, 
-            isRecommended: document.getElementById('isRecommended').value,
-            date: Date.now()
+            image: document.getElementById('image').value,
+            isRecommended: document.getElementById('isRecommended').value
         };
 
         push(productsRef, newProduct)
             .then(() => {
-                alert('Produk Berhasil Ditambahkan ke Katalog!');
-                form.reset();
+                alert("Data berhasil disimpan!");
+                productForm.reset();
             })
-            .catch((error) => alert('Error: Pastikan Anda Login sebagai Admin!'));
+            .catch((err) => alert("Gagal menyimpan: " + err.message));
     });
 }
 
-const brandFilter = document.getElementById('brand-filter');
-if (brandFilter) {
-    brandFilter.addEventListener('change', (e) => {
-        const selected = e.target.value;
-        const cards = document.querySelectorAll('#catalog-grid .product-card');
+// FILTER FUNCTION
+const filterSelect = document.getElementById('brand-filter');
+if (filterSelect) {
+    filterSelect.addEventListener('change', (e) => {
+        const filter = e.target.value;
+        const cards = document.querySelectorAll('#catalog-grid .card');
+        
         cards.forEach(card => {
-            if (selected === 'all' || card.dataset.brand === selected) {
+            if (filter === 'all' || card.dataset.brand === filter) {
                 card.style.display = 'flex';
             } else {
                 card.style.display = 'none';
@@ -175,9 +185,10 @@ if (brandFilter) {
     });
 }
 
-window.deleteProduct = (key) => {
-    if(confirm('Hapus produk ini dari database secara permanen?')) {
+// HAPUS DATA FUNCTION (Global Scope)
+window.hapusProduk = (key) => {
+    if (confirm("Hapus produk ini permanen?")) {
         remove(ref(db, `products/${key}`))
-        .catch(err => alert("Gagal menghapus: Akses Ditolak"));
+            .catch(err => alert("Gagal menghapus (Akses Ditolak)"));
     }
 };
